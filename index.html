@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1 Hand Video Player - One-Handed Video Control</title>
+    <meta name="description" content="Watch videos with complete one-handed control. Skip, rewind, pause, and adjust volume—all from one side of the screen. Free your other hand for what matters most.">
+    <meta name="keywords" content="video player, one hand, single hand, browser, streaming, media player, gesture control, accessibility">
+    <link rel="canonical" href="https://1handplayer.com">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="1 Hand Video Player - One-Handed Video Control">
+    <meta property="og:description" content="Watch videos with complete one-handed control. Free your other hand for what matters most.">
+    <meta property="og:url" content="https://1handplayer.com">
+    <meta property="og:type" content="website">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E55A2B;
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border: #333333;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #111 100%);
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-content h1 span {
+            color: var(--primary);
+        }
+        
+        .hero-content .tagline {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            max-width: 500px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: #252525;
+        }
+        
+        .hero-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .phone-mockup {
+            position: relative;
+            width: 280px;
+        }
+        
+        .phone-mockup img {
+            width: 100%;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: var(--bg-dark);
+        }
+        
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        /* Player Section */
+        .player-section {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #0f0f0f 100%);
+        }
+        
+        .player-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .player-image img {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .player-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .player-content h2 span {
+            color: var(--primary);
+        }
+        
+        .player-content > p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .control-list {
+            list-style: none;
+        }
+        
+        .control-list li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .control-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .control-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 107, 53, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .control-list li span {
+            font-size: 0.95rem;
+        }
+        
+        /* Use Cases */
+        .use-cases {
+            padding: 6rem 2rem;
+            background: var(--bg-dark);
+        }
+        
+        .use-cases-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .use-case-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .use-case-card:hover {
+            transform: translateY(-4px);
+        }
+        
+        .use-case-card .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .use-case-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .use-case-card p {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        /* Download Section */
+        .download {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, #0f0f0f 0%, var(--bg-dark) 100%);
+            text-align: center;
+        }
+        
+        .download h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .download > p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .store-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .store-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+        
+        .store-badge:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .store-badge svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .store-badge .store-text {
+            text-align: left;
+        }
+        
+        .store-badge .store-text small {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+        
+        .store-badge .store-text strong {
+            font-size: 1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-container,
+            .player-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-content p {
+                margin: 0 auto 2rem;
+            }
+            
+            .cta-buttons {
+                justify-content: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .use-cases-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .player-container {
+                gap: 2rem;
+            }
+            
+            .player-image {
+                order: -1;
+            }
+            
+            .control-list {
+                text-align: left;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .use-cases-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo"><img src="images/logo.png" alt="1 Hand Video Player" style="height: 40px;"></a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#player">Player</a></li>
+                <li><a href="#download">Download</a></li>
+                <li><a href="support.html">Support</a></li>
+                <li><a href="privacy.html">Privacy</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>All Controls.<br><span>One Hand.</span></h1>
+                <p class="tagline">Free your other hand for what matters most.</p>
+                <p>Watch videos with complete one-handed control. Skip, rewind, pause, and adjust volume—all from one side of the screen.</p>
+                <div class="cta-buttons">
+                    <a href="#download" class="btn btn-primary">Download Now</a>
+                    <a href="#features" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="phone-mockup">
+                    <img src="images/screenshot-home.jpg" alt="1 Hand Video Player App">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Designed for Real Life</h2>
+                <p>Finally, a video player designed for how you actually watch videos.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👆</div>
+                    <h3>One-Handed Control</h3>
+                    <p>All playback controls positioned on one side of the screen. Left or right—your choice.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Gear Wheel Scrubber</h3>
+                    <p>Swipe to skip forward or backward. Each gear notch = 10 seconds with haptic feedback.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔊</div>
+                    <h3>Smart Volume</h3>
+                    <p>Tap to show volume slider, auto-hides after 3 seconds. No accidental adjustments.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Built-in Browser</h3>
+                    <p>Browse any video website directly in-app. Smart detection finds playable content.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Playback Speed</h3>
+                    <p>Adjust speed from 0.5x to 2.0x. Watch at your own pace.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🖥️</div>
+                    <h3>Immersive Mode</h3>
+                    <p>True full-screen experience with hidden system UI. Focus on what you're watching.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Player Section -->
+    <section class="player-section" id="player">
+        <div class="player-container">
+            <div class="player-image">
+                <img src="images/screenshot-player.png" alt="1 Hand Video Player Interface">
+            </div>
+            <div class="player-content">
+                <h2>The <span>One-Handed</span> Player</h2>
+                <p>Every control is just a thumb-tap away. Switch between left and right hand modes instantly.</p>
+                <ul class="control-list">
+                    <li>
+                        <div class="control-icon">⏯️</div>
+                        <span><strong>Play/Pause</strong> — Tap center screen</span>
+                    </li>
+                    <li>
+                        <div class="control-icon">⏩</div>
+                        <span><strong>Skip Forward/Back</strong> — Gear wheel scrubber</span>
+                    </li>
+                    <li>
+                        <div class="control-icon">🔊</div>
+                        <span><strong>Volume</strong> — Vertical slider, auto-hides</span>
+                    </li>
+                    <li>
+                        <div class="control-icon">🚀</div>
+                        <span><strong>Speed</strong> — 0.5x to 2.0x playback</span>
+                    </li>
+                    <li>
+                        <div class="control-icon">🤚</div>
+                        <span><strong>Switch Hands</strong> — Flip all controls instantly</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Use Cases -->
+    <section class="use-cases">
+        <div class="section-container">
+            <div class="section-header">
+                <h2>Your Other Hand Has Better Things to Do</h2>
+                <p>Because life doesn't stop when you're watching videos.</p>
+            </div>
+            <div class="use-cases-grid">
+                <div class="use-case-card">
+                    <div class="emoji">🍕</div>
+                    <h4>Eating</h4>
+                    <p>No greasy fingerprints everywhere</p>
+                </div>
+                <div class="use-case-card">
+                    <div class="emoji">🚇</div>
+                    <h4>Commuting</h4>
+                    <p>Hold the rail, watch with the other</p>
+                </div>
+                <div class="use-case-card">
+                    <div class="emoji">🛋️</div>
+                    <h4>Relaxing</h4>
+                    <p>No need to pull your arm out</p>
+                </div>
+                <div class="use-case-card">
+                    <div class="emoji">🍳</div>
+                    <h4>Cooking</h4>
+                    <p>Keep stirring while you watch</p>
+                </div>
+                <div class="use-case-card">
+                    <div class="emoji">💪</div>
+                    <h4>Working Out</h4>
+                    <p>Adjust without dropping weights</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Download Section -->
+    <section class="download" id="download">
+        <h2>Download Now</h2>
+        <p>Available on iOS and Android. Free your other hand today.</p>
+        <div class="store-badges">
+            <a href="#" class="store-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                <div class="store-text">
+                    <small>Download on the</small>
+                    <strong>App Store</strong>
+                </div>
+            </a>
+            <a href="#" class="store-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a1 1 0 0 1 .609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626a1 1 0 0 1 0 1.73l-2.808 1.626L15.206 12l2.492-2.491zM5.864 2.658L16.802 8.99l-2.303 2.303-8.635-8.635z"/></svg>
+                <div class="store-text">
+                    <small>Get it on</small>
+                    <strong>Google Play</strong>
+                </div>
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <ul class="footer-links">
+                <li><a href="support.html">Support</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="mailto:support@1handplayer.com">Contact</a></li>
+            </ul>
+            <p class="copyright">© 2025 1 Hand Video Player. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

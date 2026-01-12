@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - 1 Hand Video Player</title>
+    <meta name="description" content="Get help with 1 Hand Video Player. Find answers to common questions and contact our support team.">
+    <link rel="canonical" href="https://1handplayer.com/support">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E55A2B;
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border: #333333;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text-primary);
+        }
+        
+        /* Main Content */
+        .page-header {
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-dark) 0%, #111 100%);
+        }
+        
+        .page-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .page-header p {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            margin-bottom: 4rem;
+        }
+        
+        .faq-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        .faq-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .faq-item h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+        
+        .faq-item p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .contact-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-section p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .contact-email:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        .copyright {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo"><img src="images/logo.png" alt="1 Hand Video Player" style="height: 40px;"></a>
+            <ul class="nav-links">
+                <li><a href="/#features">Features</a></li>
+                <li><a href="/#player">Player</a></li>
+                <li><a href="/#download">Download</a></li>
+                <li><a href="support.html" class="active">Support</a></li>
+                <li><a href="privacy.html">Privacy</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- Page Header -->
+    <header class="page-header">
+        <h1>Support</h1>
+        <p>Find answers to common questions and get help with 1 Hand Video Player.</p>
+    </header>
+    
+    <!-- Content -->
+    <main class="content">
+        <!-- Getting Started -->
+        <section class="faq-section">
+            <h2>Getting Started</h2>
+            
+            <div class="faq-item">
+                <h3>How do I use the one-handed controls?</h3>
+                <p>All playback controls are positioned on one side of the screen. By default, controls appear on the left side. To switch to right-hand mode, tap the hand icon in the top corner of the player. All controls will instantly flip to the other side.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>How does the gear wheel scrubber work?</h3>
+                <p>The gear wheel allows you to skip forward or backward through the video. Simply swipe left or right on the gear wheel. Each gear notch represents 10 seconds. You'll feel haptic feedback with each notch to confirm your action.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>How do I adjust the volume?</h3>
+                <p>Tap the volume icon to show the volume slider. Slide up or down to adjust. The slider will automatically hide after 3 seconds of inactivity to keep the screen clean.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>How do I play/pause the video?</h3>
+                <p>Simply tap the center of the screen to toggle play/pause. This large tap target makes it easy to control playback with one hand.</p>
+            </div>
+        </section>
+        
+        <!-- Browser Features -->
+        <section class="faq-section">
+            <h2>Browser Features</h2>
+            
+            <div class="faq-item">
+                <h3>How do I find videos to play?</h3>
+                <p>Use the built-in browser to navigate to any video website. When a video is detected on the page, a "Play with 1 Hand Video Player" button will appear at the bottom of the screen. Tap it to open the video in the one-handed player.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>Can I save my favorite websites?</h3>
+                <p>Yes! Tap the bookmark icon in the browser toolbar to save the current page. Access your bookmarks anytime from the bookmarks menu.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>Why isn't a video being detected?</h3>
+                <p>Some websites use special video formats that may not be immediately detected. Try waiting for the video to start playing on the webpage first, then the detection button should appear. If the issue persists, the website may be using a format that isn't currently supported.</p>
+            </div>
+        </section>
+        
+        <!-- Playback -->
+        <section class="faq-section">
+            <h2>Playback</h2>
+            
+            <div class="faq-item">
+                <h3>How do I change playback speed?</h3>
+                <p>Tap the speed button (showing "1x" by default) to cycle through available speeds: 0.5x, 0.75x, 1x, 1.25x, 1.5x, and 2x.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>What is immersive mode?</h3>
+                <p>Immersive mode hides all system UI elements (status bar, navigation bar) for a distraction-free viewing experience. The player automatically enters immersive mode when playing a video.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>How do I exit the player?</h3>
+                <p>Tap the close button (X) in the top corner, or use your device's back gesture/button to return to the browser.</p>
+            </div>
+        </section>
+        
+        <!-- Troubleshooting -->
+        <section class="faq-section">
+            <h2>Troubleshooting</h2>
+            
+            <div class="faq-item">
+                <h3>The video won't play</h3>
+                <p>This can happen if the video format isn't supported or if there's a network issue. Try refreshing the page and waiting for the video to load completely before tapping the play button. Make sure you have a stable internet connection.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>Haptic feedback isn't working</h3>
+                <p>Make sure haptic feedback is enabled in your device settings. On some devices, haptic feedback may be disabled in power saving mode.</p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>The app is running slowly</h3>
+                <p>Try closing other apps running in the background. If the issue persists, restart the app or your device.</p>
+            </div>
+        </section>
+        
+        <!-- Contact -->
+        <section class="contact-section">
+            <h2>Still Need Help?</h2>
+            <p>Can't find the answer you're looking for? Our support team is here to help.</p>
+            <a href="mailto:support@1handplayer.com" class="contact-email">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                support@1handplayer.com
+            </a>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <ul class="footer-links">
+                <li><a href="support.html">Support</a></li>
+                <li><a href="privacy.html">Privacy Policy</a></li>
+                <li><a href="mailto:support@1handplayer.com">Contact</a></li>
+            </ul>
+            <p class="copyright">© 2025 1 Hand Video Player. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
