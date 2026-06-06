@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>Creator · Vault</title>
+    <meta name="description" content="Creator profile on Vault — every post is encrypted. Unlock with the delock app.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --primary: #FF4D8D;
+            --accent: #7C5CFF;
+            --bg-dark: #0a0a0a;
+            --bg-card: #161616;
+            --bg-elevated: #1f1f1f;
+            --text-primary: #ffffff;
+            --text-secondary: #9a9a9a;
+            --border: #2a2a2a;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        html, body { overscroll-behavior-y: none; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.5;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            padding-bottom: calc(24px + var(--safe-bottom));
+        }
+
+        /* Top bar (overlays the cover) */
+        .topbar {
+            position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 480px; z-index: 100;
+            display: flex; align-items: center; gap: 12px;
+            padding: calc(12px + var(--safe-top)) 16px 12px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0));
+        }
+        .topbar.scrolled {
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+        .back {
+            background: rgba(0,0,0,0.4); border: none; color: #fff;
+            width: 34px; height: 34px; border-radius: 50%;
+            font-size: 1.4rem; cursor: pointer; line-height: 1;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; backdrop-filter: blur(6px);
+        }
+        .topbar-title { font-weight: 700; font-size: 1.02rem; opacity: 0; transition: opacity 0.2s; }
+        .topbar.scrolled .topbar-title { opacity: 1; }
+
+        /* Cover */
+        .cover { height: 168px; width: 100%; position: relative; }
+        .cover::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(10,10,10,0) 40%, var(--bg-dark) 100%);
+        }
+
+        /* Profile header */
+        .profile { padding: 0 18px; margin-top: -44px; position: relative; z-index: 2; }
+        .avatar {
+            width: 88px; height: 88px; border-radius: 50%;
+            border: 3px solid var(--bg-dark);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.1rem; font-weight: 700; color: #fff;
+        }
+        .name-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+        .name-row h1 { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.5px; }
+        .verified { color: var(--accent); font-size: 1rem; }
+        .handle { color: var(--text-secondary); font-size: 0.9rem; }
+        .bio { font-size: 0.9rem; margin-top: 10px; }
+
+        .stats {
+            display: flex; gap: 22px; margin-top: 16px;
+        }
+        .stat .num { font-weight: 800; font-size: 1.05rem; }
+        .stat .lbl { font-size: 0.72rem; color: var(--text-secondary); }
+
+        .actions { display: flex; gap: 10px; margin-top: 16px; }
+        .btn-sub {
+            flex: 1; border: none; cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff; padding: 13px; border-radius: 12px;
+            font-size: 0.95rem; font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            box-shadow: 0 8px 22px rgba(255,77,141,0.32);
+        }
+        .btn-msg {
+            flex: 0 0 auto; border: 1px solid var(--border); cursor: pointer;
+            background: var(--bg-card); color: var(--text-primary);
+            padding: 13px 16px; border-radius: 12px; font-size: 1.1rem;
+        }
+
+        .enc-banner {
+            margin: 18px 18px 4px;
+            background: linear-gradient(135deg, rgba(124,92,255,0.18), rgba(255,77,141,0.18));
+            border: 1px solid rgba(124,92,255,0.35);
+            border-radius: 14px;
+            padding: 11px 14px;
+            display: flex; gap: 10px; align-items: center; font-size: 0.8rem;
+        }
+        .enc-banner .lock { font-size: 1.2rem; }
+        .enc-banner small { color: var(--text-secondary); }
+
+        /* Tabs */
+        .tabs {
+            display: flex; margin-top: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .tab {
+            flex: 1; text-align: center; padding: 13px 0;
+            font-size: 0.86rem; font-weight: 600; color: var(--text-secondary);
+            background: none; border: none; cursor: pointer; position: relative;
+        }
+        .tab.active { color: var(--text-primary); }
+        .tab.active::after {
+            content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+            width: 40px; height: 3px; border-radius: 3px; background: var(--primary);
+        }
+
+        /* Locked grid */
+        .grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 3px; padding: 3px;
+        }
+        .tile {
+            position: relative; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer;
+        }
+        .tile-blur { position: absolute; inset: 0; filter: blur(18px); transform: scale(1.25); }
+        .tile-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+        }
+        .tile-lock {
+            width: 42px; height: 42px; border-radius: 50%;
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+            backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+        }
+        .tile-price {
+            position: absolute; top: 8px; right: 8px;
+            background: rgba(124,92,255,0.85); padding: 3px 8px; border-radius: 14px;
+            font-size: 0.66rem; font-weight: 700;
+        }
+        .tile-enc {
+            position: absolute; bottom: 8px; left: 8px;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.18);
+            padding: 3px 7px; border-radius: 12px; font-size: 0.6rem; font-weight: 600;
+        }
+
+        /* Unlock bottom sheet (shared pattern) */
+        .sheet-backdrop {
+            position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.6);
+            opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+        }
+        .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+        .sheet {
+            position: fixed; left: 50%; bottom: 0; transform: translate(-50%, 100%);
+            width: 100%; max-width: 480px; z-index: 201;
+            background: var(--bg-elevated); border-radius: 22px 22px 0 0;
+            padding: 8px 22px calc(26px + var(--safe-bottom));
+            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .sheet.open { transform: translate(-50%, 0); }
+        .sheet-handle { width: 40px; height: 4px; border-radius: 4px; background: var(--border); margin: 0 auto 18px; }
+        .sheet-icon {
+            width: 72px; height: 72px; border-radius: 20px; margin: 0 auto 16px;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            display: flex; align-items: center; justify-content: center; font-size: 2.2rem;
+            box-shadow: 0 10px 30px rgba(124,92,255,0.4);
+        }
+        .sheet h3 { text-align: center; font-size: 1.25rem; margin-bottom: 4px; }
+        .sheet .sub-en { text-align: center; color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 18px; }
+        .sheet-steps { list-style: none; margin-bottom: 20px; }
+        .sheet-steps li {
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem;
+        }
+        .sheet-steps li:last-child { border-bottom: none; }
+        .step-num {
+            flex: 0 0 auto; width: 24px; height: 24px; border-radius: 50%;
+            background: rgba(124,92,255,0.2); color: var(--accent);
+            display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700;
+        }
+        .step-txt small { display: block; color: var(--text-secondary); font-size: 0.74rem; }
+        .sheet-cta {
+            display: block; width: 100%; text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff; border: none; text-decoration: none;
+            padding: 15px; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 8px 24px rgba(255,77,141,0.4);
+        }
+        .sheet-note { text-align: center; color: var(--text-secondary); font-size: 0.72rem; margin-top: 12px; }
+    </style>
+</head>
+<body>
+    <div class="topbar" id="topbar">
+        <a class="back" href="platform.html" aria-label="Back">‹</a>
+        <span class="topbar-title" id="topbarTitle"></span>
+    </div>
+
+    <div class="cover" id="cover"></div>
+
+    <section class="profile">
+        <div class="avatar" id="avatar"></div>
+        <div class="name-row">
+            <h1 id="cName"></h1>
+            <span class="verified">✔</span>
+        </div>
+        <div class="handle" id="cHandle"></div>
+        <p class="bio" id="cBio"></p>
+
+        <div class="stats">
+            <div class="stat"><div class="num" id="sPosts"></div><div class="lbl">Posts</div></div>
+            <div class="stat"><div class="num" id="sLikes"></div><div class="lbl">Likes</div></div>
+            <div class="stat"><div class="num" id="sSubs"></div><div class="lbl">Subscribers</div></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-sub" id="subBtn">🔓 Subscribe to unlock · <span id="subPrice"></span></button>
+            <button class="btn-msg" id="msgBtn" aria-label="Message">💬</button>
+        </div>
+    </section>
+
+    <div class="enc-banner">
+        <span class="lock">🔐</span>
+        <small>Every post from this creator is encrypted · Unlock with the delock app</small>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active">🔒 Posts</button>
+        <button class="tab" id="mediaTab">🖼️ Media</button>
+    </div>
+
+    <div class="grid" id="grid"></div>
+
+    <!-- Unlock bottom sheet -->
+    <div class="sheet-backdrop" id="sheetBackdrop"></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+        <div class="sheet-handle"></div>
+        <div class="sheet-icon">🔓</div>
+        <h3 id="sheetTitle">This content is encrypted</h3>
+        <p class="sub-en">Unlock it with the delock app</p>
+        <ul class="sheet-steps">
+            <li>
+                <span class="step-num">1</span>
+                <span class="step-txt">Get a delock subscription<small>One plan unlocks the whole platform</small></span>
+            </li>
+            <li>
+                <span class="step-num">2</span>
+                <span class="step-txt">Decrypt the content with the delock app<small>One tap to unlock any post</small></span>
+            </li>
+            <li>
+                <span class="step-num">3</span>
+                <span class="step-txt">Enjoy full-quality photos &amp; videos<small>Unlimited, anytime</small></span>
+            </li>
+        </ul>
+        <a href="delock.html" class="sheet-cta">🔑 Unlock with delock</a>
+        <p class="sheet-note">Decryption powered by delock</p>
+    </div>
+
+    <script src="creators.js"></script>
+    <script>
+        const V = window.VAULT;
+        const params = new URLSearchParams(location.search);
+        const creator = V.getCreator(params.get('id')) || V.creators[0];
+
+        // ----- Populate profile -----
+        document.title = creator.name + ' · Vault';
+        document.getElementById('topbarTitle').textContent = creator.name;
+        document.getElementById('cover').style.background = V.grad(creator.g);
+        const avatar = document.getElementById('avatar');
+        avatar.style.background = V.grad(creator.g);
+        avatar.textContent = creator.init;
+        document.getElementById('cName').textContent = creator.name;
+        document.getElementById('cHandle').textContent = creator.handle;
+        document.getElementById('cBio').textContent = creator.bio;
+        document.getElementById('sPosts').textContent = creator.postCount;
+        document.getElementById('sLikes').textContent = creator.likes;
+        document.getElementById('sSubs').textContent = creator.subs;
+        document.getElementById('subPrice').textContent = creator.price + '/mo';
+
+        // ----- Locked grid -----
+        const grid = document.getElementById('grid');
+        creator.posts.forEach((post) => {
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.innerHTML = `
+                <div class="tile-blur" style="background:${V.grad(post.g)}"></div>
+                <div class="tile-price">${post.price}</div>
+                <div class="tile-overlay"><div class="tile-lock">🔒</div></div>
+                <div class="tile-enc">🔐 Encrypted</div>`;
+            tile.addEventListener('click', openSheet);
+            grid.appendChild(tile);
+        });
+
+        // ----- Bottom sheet + actions -----
+        const backdrop = document.getElementById('sheetBackdrop');
+        const sheet = document.getElementById('sheet');
+        function openSheet(e) {
+            if (e) e.preventDefault();
+            backdrop.classList.add('open');
+            sheet.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSheet() {
+            backdrop.classList.remove('open');
+            sheet.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        backdrop.addEventListener('click', closeSheet);
+        document.getElementById('subBtn').addEventListener('click', openSheet);
+        document.getElementById('msgBtn').addEventListener('click', openSheet);
+        document.getElementById('mediaTab').addEventListener('click', openSheet);
+
+        // ----- Sticky top bar style on scroll -----
+        const topbar = document.getElementById('topbar');
+        window.addEventListener('scroll', () => {
+            topbar.classList.toggle('scrolled', window.scrollY > 120);
+        }, { passive: true });
+    </script>
+</body>
+</html>
