@@ -100,7 +100,6 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 0.72rem; font-weight: 700; color: #fff;
         }
-        .bullet .b-stars { color: #FFC83D; font-size: 0.6rem; letter-spacing: 1px; }
         @keyframes bullet-fly {
             from { transform: translateX(100vw); }
             to   { transform: translateX(-130%); }
@@ -352,22 +351,35 @@
         });
 
         // ----- Fan reviews as floating danmaku over the locked grid -----
+        // One bullet per lane, with lane height derived from the grid size, so
+        // pills never overlap each other (no two share a row, rows are spaced).
         const danmaku = document.getElementById('danmaku');
-        const lanes = [3, 14, 25, 37, 49, 61, 73, 85];
-        V.reviews.forEach((r, i) => {
-            const b = document.createElement('div');
-            b.className = 'bullet';
-            const dur = 11 + (i % 4) * 1.7 + Math.random() * 3;     // 11–20s, varied per lane
-            const delay = -(Math.random() * dur);                    // stagger; many already mid-flight
-            b.style.setProperty('--lane', lanes[i % lanes.length] + '%');
-            b.style.setProperty('--dur', dur.toFixed(1) + 's');
-            b.style.setProperty('--delay', delay.toFixed(1) + 's');
-            b.innerHTML = `
-                <span class="b-av" style="background:${V.grad(i + 1)}">${r.name[0]}</span>
-                <span class="b-stars">★★★★★</span>
-                <span>${r.text}</span>`;
-            danmaku.appendChild(b);
-        });
+        function buildDanmaku() {
+            const h = danmaku.clientHeight || grid.clientHeight || 600;
+            const minGap = 48; // minimum vertical spacing between rows (px)
+            const laneCount = Math.max(3, Math.min(V.reviews.length, Math.floor(h / minGap)));
+            const gap = h / laneCount;
+            danmaku.innerHTML = '';
+            for (let i = 0; i < laneCount; i++) {
+                const r = V.reviews[i % V.reviews.length];
+                const b = document.createElement('div');
+                b.className = 'bullet';
+                const dur = 13 + (i % 5) * 1.6 + Math.random() * 3; // varied speeds
+                const delay = -(Math.random() * dur);                // stagger entry
+                b.style.setProperty('--lane', Math.round(i * gap + gap / 2 - 15) + 'px');
+                b.style.setProperty('--dur', dur.toFixed(1) + 's');
+                b.style.setProperty('--delay', delay.toFixed(1) + 's');
+                b.innerHTML = `
+                    <span class="b-av" style="background:${V.grad(i + 1)}">${r.name[0]}</span>
+                    <span>${r.text}</span>`;
+                danmaku.appendChild(b);
+            }
+        }
+        requestAnimationFrame(buildDanmaku);
+        let rzTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(rzTimer); rzTimer = setTimeout(buildDanmaku, 250);
+        }, { passive: true });
 
         // ----- Bottom sheet + actions -----
         const backdrop = document.getElementById('sheetBackdrop');
