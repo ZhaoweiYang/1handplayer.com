@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0a">
+    <title>delock · 解锁加密内容</title>
+    <meta name="description" content="delock — 一键解密 Vault 加密内容。开通订阅，无限解锁高清原图与视频。Unlock encrypted content with delock.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --primary: #FF4D8D;
+            --accent: #7C5CFF;
+            --bg-dark: #0a0a0a;
+            --bg-card: #161616;
+            --bg-elevated: #1f1f1f;
+            --text-primary: #ffffff;
+            --text-secondary: #9a9a9a;
+            --border: #2a2a2a;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.5;
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding-bottom: calc(110px + var(--safe-bottom));
+        }
+
+        /* Top bar */
+        .topbar {
+            position: sticky; top: 0; z-index: 50;
+            display: flex; align-items: center; gap: 12px;
+            padding: calc(12px + var(--safe-top)) 16px 12px;
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border);
+        }
+        .back { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; line-height: 1; text-decoration: none; }
+        .topbar-title { font-weight: 700; font-size: 1.05rem; }
+
+        /* Hero */
+        .hero { text-align: center; padding: 36px 24px 20px; }
+        .app-logo {
+            width: 88px; height: 88px; border-radius: 24px; margin: 0 auto 18px;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.8rem;
+            box-shadow: 0 14px 40px rgba(124,92,255,0.45);
+        }
+        .hero h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
+        .hero h1 .dot { color: var(--primary); }
+        .hero .pitch { color: var(--text-secondary); font-size: 0.95rem; margin-top: 8px; }
+        .hero .pitch-en { color: #6e6e6e; font-size: 0.78rem; margin-top: 2px; }
+
+        /* Feature list */
+        .features { padding: 8px 20px 24px; }
+        .feature {
+            display: flex; gap: 14px; align-items: center;
+            padding: 14px; margin-bottom: 10px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+        .feature .fi {
+            flex: 0 0 auto; width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(124,92,255,0.16);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+        }
+        .feature h4 { font-size: 0.95rem; }
+        .feature p { font-size: 0.78rem; color: var(--text-secondary); }
+
+        /* Plans */
+        .plans { padding: 4px 20px; }
+        .plans h2 { font-size: 1.15rem; margin-bottom: 4px; }
+        .plans .sub { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 16px; }
+        .plan {
+            position: relative;
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px; margin-bottom: 12px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px; cursor: pointer;
+            transition: border-color 0.18s, background 0.18s;
+        }
+        .plan.selected { border-color: var(--primary); background: rgba(255,77,141,0.06); }
+        .plan .radio {
+            flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+        }
+        .plan.selected .radio { border-color: var(--primary); }
+        .plan.selected .radio::after {
+            content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--primary);
+        }
+        .plan-info { flex: 1; }
+        .plan-info .pname { font-weight: 700; font-size: 1rem; }
+        .plan-info .pdesc { font-size: 0.76rem; color: var(--text-secondary); }
+        .plan-price { text-align: right; }
+        .plan-price .amount { font-weight: 800; font-size: 1.15rem; }
+        .plan-price .period { font-size: 0.72rem; color: var(--text-secondary); }
+        .plan-price .old { font-size: 0.72rem; color: #6e6e6e; text-decoration: line-through; }
+        .badge-best {
+            position: absolute; top: -10px; right: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            font-size: 0.66rem; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+        }
+
+        .trust {
+            display: flex; justify-content: center; gap: 18px;
+            padding: 18px 20px 4px; flex-wrap: wrap;
+        }
+        .trust span { font-size: 0.72rem; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
+
+        .legal {
+            text-align: center; color: #6e6e6e; font-size: 0.68rem;
+            padding: 16px 28px 0; line-height: 1.6;
+        }
+        .legal a { color: var(--text-secondary); }
+
+        /* Sticky pay bar */
+        .paybar {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 480px; z-index: 60;
+            background: rgba(15,15,15,0.96);
+            backdrop-filter: blur(14px);
+            border-top: 1px solid var(--border);
+            padding: 12px 20px calc(14px + var(--safe-bottom));
+        }
+        .pay-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; border: none; cursor: pointer;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff; padding: 16px; border-radius: 14px;
+            font-size: 1.05rem; font-weight: 800;
+            box-shadow: 0 8px 24px rgba(255,77,141,0.4);
+        }
+        .pay-sub { text-align: center; font-size: 0.7rem; color: var(--text-secondary); margin-top: 8px; }
+
+        /* Success toast */
+        .toast {
+            position: fixed; left: 50%; bottom: calc(120px + var(--safe-bottom));
+            transform: translate(-50%, 20px);
+            background: var(--bg-elevated); border: 1px solid var(--border);
+            color: #fff; padding: 14px 20px; border-radius: 14px;
+            font-size: 0.85rem; z-index: 100; max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            opacity: 0; pointer-events: none; transition: all 0.3s ease;
+            text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a class="back" href="platform.html" aria-label="返回 Back">‹</a>
+        <span class="topbar-title">开通 delock 解锁</span>
+    </div>
+
+    <section class="hero">
+        <div class="app-logo">🔓</div>
+        <h1>delock<span class="dot">.</span></h1>
+        <p class="pitch">一键解密 Vault 上的加密内容</p>
+        <p class="pitch-en">Instantly decrypt every locked photo &amp; video</p>
+    </section>
+
+    <section class="features">
+        <div class="feature">
+            <div class="fi">🔐</div>
+            <div><h4>无限解锁 Unlimited unlock</h4><p>解密平台全部加密图片与视频</p></div>
+        </div>
+        <div class="feature">
+            <div class="fi">🖼️</div>
+            <div><h4>高清原画质 Full quality</h4><p>查看无压缩高清原图与原视频</p></div>
+        </div>
+        <div class="feature">
+            <div class="fi">⚡</div>
+            <div><h4>秒速解密 Instant</h4><p>本地端到端解密，打开即看</p></div>
+        </div>
+        <div class="feature">
+            <div class="fi">🛡️</div>
+            <div><h4>隐私保护 Private</h4><p>密钥仅存于本机，无人可窥探</p></div>
+        </div>
+    </section>
+
+    <section class="plans">
+        <h2>选择订阅方案 Choose a plan</h2>
+        <p class="sub">随时可取消 · Cancel anytime</p>
+
+        <div class="plan" data-plan="周卡 Weekly" data-amount="¥18">
+            <div class="radio"></div>
+            <div class="plan-info">
+                <div class="pname">周卡 Weekly</div>
+                <div class="pdesc">7 天无限解锁</div>
+            </div>
+            <div class="plan-price">
+                <div class="amount">¥18</div>
+                <div class="period">/ 周 week</div>
+            </div>
+        </div>
+
+        <div class="plan selected" data-plan="月卡 Monthly" data-amount="¥48">
+            <div class="badge-best">最划算 BEST</div>
+            <div class="radio"></div>
+            <div class="plan-info">
+                <div class="pname">月卡 Monthly</div>
+                <div class="pdesc">30 天无限解锁 · 低至 ¥1.6/天</div>
+            </div>
+            <div class="plan-price">
+                <div class="old">¥72</div>
+                <div class="amount">¥48</div>
+                <div class="period">/ 月 month</div>
+            </div>
+        </div>
+
+        <div class="plan" data-plan="年卡 Yearly" data-amount="¥298">
+            <div class="radio"></div>
+            <div class="plan-info">
+                <div class="pname">年卡 Yearly</div>
+                <div class="pdesc">365 天无限解锁 · 低至 ¥0.8/天</div>
+            </div>
+            <div class="plan-price">
+                <div class="old">¥576</div>
+                <div class="amount">¥298</div>
+                <div class="period">/ 年 year</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="trust">
+        <span>🔒 安全支付 Secure</span>
+        <span>↩️ 随时取消 Cancel anytime</span>
+        <span>⭐ 4.9 评分</span>
+    </div>
+
+    <p class="legal">
+        订阅将通过你的应用商店账户收费，到期自动续费，可在设置中随时关闭。<br>
+        Subscription auto-renews unless cancelled. By continuing you agree to the
+        <a href="privacy.html">隐私政策 Privacy</a> 与服务条款。
+    </p>
+
+    <div class="paybar">
+        <button class="pay-btn" id="payBtn">🔑 立即开通 · <span id="payAmount">¥48</span>/月</button>
+        <p class="pay-sub">点击即同意自动续费协议 · Auto-renewing subscription</p>
+    </div>
+
+    <div class="toast" id="toast">✅ 这是演示页面，未发生真实扣费<br><small>Demo only — no real payment was processed</small></div>
+
+    <script>
+        const plans = Array.from(document.querySelectorAll('.plan'));
+        const payAmount = document.getElementById('payAmount');
+        let selected = document.querySelector('.plan.selected');
+
+        function selectPlan(el) {
+            plans.forEach(p => p.classList.remove('selected'));
+            el.classList.add('selected');
+            selected = el;
+            const amount = el.getAttribute('data-amount');
+            const label = el.getAttribute('data-plan');
+            const unit = label.includes('周') ? '/周' : label.includes('年') ? '/年' : '/月';
+            payAmount.textContent = amount + unit;
+        }
+        plans.forEach(p => p.addEventListener('click', () => selectPlan(p)));
+
+        const toast = document.getElementById('toast');
+        document.getElementById('payBtn').addEventListener('click', () => {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3200);
+        });
+    </script>
+</body>
+</html>
