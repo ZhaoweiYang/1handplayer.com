@@ -113,6 +113,43 @@
             margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
+        /* ===== Recommended creators rail ===== */
+        .suggest { padding: 4px 0 10px; }
+        .suggest-title {
+            padding: 0 16px 10px; font-weight: 700; font-size: 0.95rem;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .suggest-row {
+            display: flex; gap: 12px; overflow-x: auto;
+            padding: 0 16px 4px; scrollbar-width: none;
+        }
+        .suggest-row::-webkit-scrollbar { display: none; }
+        .suggest-card {
+            flex: 0 0 auto; width: 150px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden;
+        }
+        .sc-cover { height: 64px; }
+        .sc-avatar {
+            width: 52px; height: 52px; border-radius: 50%;
+            border: 3px solid var(--bg-card); margin: -26px auto 0;
+            position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #fff;
+        }
+        .sc-body { padding: 6px 10px 12px; text-align: center; }
+        .sc-name {
+            font-size: 0.9rem; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 4px;
+        }
+        .sc-followers { font-size: 0.72rem; color: var(--text-secondary); margin: 2px 0 10px; }
+        .sc-btn {
+            display: block; width: 100%; text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff; text-decoration: none;
+            padding: 8px; border-radius: 10px; font-size: 0.82rem; font-weight: 700;
+        }
+
         /* ===== Feed ===== */
         .feed { padding: 4px 0 8px; }
         .post {
@@ -314,6 +351,12 @@
     <!-- Creator stories row -->
     <div class="stories" id="stories"></div>
 
+    <!-- Recommended creators -->
+    <section class="suggest">
+        <div class="suggest-title">✨ Recommended for you</div>
+        <div class="suggest-row" id="suggestRow"></div>
+    </section>
+
     <!-- Feed -->
     <main class="feed" id="feed"></main>
 
@@ -370,6 +413,22 @@
                 </div>
                 <div class="story-name">${c.name}</div>`;
             storiesEl.appendChild(s);
+        });
+
+        // ----- Recommended creators (Rina featured first) -----
+        const suggestRow = document.getElementById('suggestRow');
+        V.creators.forEach((c) => {
+            const card = document.createElement('div');
+            card.className = 'suggest-card';
+            card.innerHTML = `
+                <div class="sc-cover" style="background:${V.grad(c.g)}"></div>
+                <div class="sc-avatar" style="background:${V.grad(c.g)}">${V.avatarInner(c)}</div>
+                <div class="sc-body">
+                    <div class="sc-name">${c.name} <span class="verified">✔</span></div>
+                    <div class="sc-followers">${c.followers} followers</div>
+                    <a class="sc-btn" href="${profileUrl(c.id)}">View</a>
+                </div>`;
+            suggestRow.appendChild(card);
         });
 
         // ----- Render feed -----
