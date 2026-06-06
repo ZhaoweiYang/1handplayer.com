@@ -59,12 +59,54 @@
         .topbar-title { font-weight: 700; font-size: 1.02rem; opacity: 0; transition: opacity 0.2s; }
         .topbar.scrolled .topbar-title { opacity: 1; }
 
-        /* Cover */
-        .cover { height: 168px; width: 100%; position: relative; }
+        /* Cover carousel */
+        .cover { height: 168px; width: 100%; position: relative; overflow: hidden; }
+        .cover-slide {
+            position: absolute; inset: 0; opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .cover-slide.active { opacity: 1; }
         .cover::after {
-            content: ''; position: absolute; inset: 0;
+            content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
             background: linear-gradient(180deg, rgba(10,10,10,0) 40%, var(--bg-dark) 100%);
         }
+        .cover-dots {
+            position: absolute; top: 14px; right: 14px; z-index: 3;
+            display: flex; gap: 5px;
+        }
+        .cover-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,0.45); transition: all 0.3s;
+        }
+        .cover-dot.active { background: #fff; width: 16px; border-radius: 3px; }
+
+        /* Fan reviews (scrolling praise) */
+        .reviews { padding: 16px 0 2px; overflow: hidden; }
+        .reviews-title {
+            padding: 0 18px 10px; font-size: 0.95rem; font-weight: 700;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .reviews-title small { color: var(--text-secondary); font-weight: 400; font-size: 0.74rem; }
+        .rv-row { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+        .rv-row + .rv-row { margin-top: 10px; }
+        .rv-track { display: flex; gap: 10px; width: max-content; padding: 0 10px; }
+        .rv-track.left { animation: rv-scroll 32s linear infinite; }
+        .rv-track.right { animation: rv-scroll 38s linear infinite reverse; }
+        @keyframes rv-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .review-card {
+            flex: 0 0 auto; width: 232px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 11px 13px;
+        }
+        .rv-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+        .rv-avatar {
+            width: 30px; height: 30px; border-radius: 50%; flex: 0 0 auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.82rem; font-weight: 700; color: #fff;
+        }
+        .rv-name { font-size: 0.82rem; font-weight: 600; }
+        .rv-stars { font-size: 0.66rem; color: #FFC83D; letter-spacing: 1px; }
+        .rv-text { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
 
         /* Profile header */
         .profile { padding: 0 18px; margin-top: -44px; position: relative; z-index: 2; }
@@ -200,7 +242,9 @@
         <span class="topbar-title" id="topbarTitle"></span>
     </div>
 
-    <div class="cover" id="cover"></div>
+    <div class="cover" id="cover">
+        <div class="cover-dots" id="coverDots"></div>
+    </div>
 
     <section class="profile">
         <div class="avatar" id="avatar"></div>
@@ -226,6 +270,12 @@
         <span class="lock">🔞</span>
         <small>All my posts are restricted (18+) and encrypted · Decrypt with the delock app</small>
     </div>
+
+    <section class="reviews">
+        <div class="reviews-title">💬 What fans are saying <small>· verified unlockers</small></div>
+        <div class="rv-row"><div class="rv-track left" id="rvRow1"></div></div>
+        <div class="rv-row"><div class="rv-track right" id="rvRow2"></div></div>
+    </section>
 
     <div class="tabs">
         <button class="tab active">🔒 Posts</button>
@@ -268,7 +318,35 @@
         // ----- Populate profile -----
         document.title = creator.name + ' · Vault';
         document.getElementById('topbarTitle').textContent = creator.name;
-        document.getElementById('cover').style.background = V.grad(creator.g);
+        // ----- Cover carousel (multiple rotating background images) -----
+        const cover = document.getElementById('cover');
+        const coverDots = document.getElementById('coverDots');
+        const coverIdx = [creator.g, creator.g + 2, creator.g + 5, creator.g + 7];
+        const slides = [];
+        const dots = [];
+        coverIdx.forEach((gi, i) => {
+            const slide = document.createElement('div');
+            slide.className = 'cover-slide' + (i === 0 ? ' active' : '');
+            slide.style.background = V.grad(gi);
+            cover.insertBefore(slide, coverDots);
+            slides.push(slide);
+
+            const dot = document.createElement('div');
+            dot.className = 'cover-dot' + (i === 0 ? ' active' : '');
+            coverDots.appendChild(dot);
+            dots.push(dot);
+        });
+        let coverCur = 0;
+        function showCover(n) {
+            slides[coverCur].classList.remove('active');
+            dots[coverCur].classList.remove('active');
+            coverCur = (n + slides.length) % slides.length;
+            slides[coverCur].classList.add('active');
+            dots[coverCur].classList.add('active');
+        }
+        dots.forEach((d, i) => d.addEventListener('click', () => showCover(i)));
+        setInterval(() => showCover(coverCur + 1), 3500);
+
         const avatar = document.getElementById('avatar');
         avatar.style.background = V.grad(creator.g);
         avatar.textContent = creator.init;
@@ -291,6 +369,28 @@
             tile.addEventListener('click', openSheet);
             grid.appendChild(tile);
         });
+
+        // ----- Fan reviews (scrolling praise) -----
+        function reviewCard(r, i) {
+            return `
+                <div class="review-card">
+                    <div class="rv-head">
+                        <div class="rv-avatar" style="background:${V.grad(i + 1)}">${r.name[0]}</div>
+                        <div>
+                            <div class="rv-name">${r.name}</div>
+                            <div class="rv-stars">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="rv-text">${r.text}</div>
+                </div>`;
+        }
+        const half1 = V.reviews.slice(0, Math.ceil(V.reviews.length / 2));
+        const half2 = V.reviews.slice(Math.ceil(V.reviews.length / 2));
+        // Duplicate each row's content so the marquee loops seamlessly (-50%).
+        document.getElementById('rvRow1').innerHTML =
+            (half1.map(reviewCard).join('') + half1.map(reviewCard).join(''));
+        document.getElementById('rvRow2').innerHTML =
+            (half2.map(reviewCard).join('') + half2.map(reviewCard).join(''));
 
         // ----- Bottom sheet + actions -----
         const backdrop = document.getElementById('sheetBackdrop');
