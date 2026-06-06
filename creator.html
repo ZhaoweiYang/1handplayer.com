@@ -60,7 +60,7 @@
         .topbar.scrolled .topbar-title { opacity: 1; }
 
         /* Cover carousel */
-        .cover { height: 168px; width: 100%; position: relative; overflow: hidden; user-select: none; touch-action: pan-y; }
+        .cover { height: 336px; width: 100%; position: relative; overflow: hidden; user-select: none; touch-action: pan-y; }
         .cover-slide {
             position: absolute; inset: 0; opacity: 0;
             transition: opacity 0.8s ease;
@@ -421,7 +421,7 @@
         // ----- Sticky top bar style on scroll -----
         const topbar = document.getElementById('topbar');
         window.addEventListener('scroll', () => {
-            topbar.classList.toggle('scrolled', window.scrollY > 120);
+            topbar.classList.toggle('scrolled', window.scrollY > 260);
         }, { passive: true });
     </script>
 </body>
