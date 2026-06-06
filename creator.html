@@ -95,11 +95,6 @@
             display: flex; align-items: center; justify-content: center; gap: 6px;
             box-shadow: 0 8px 22px rgba(255,77,141,0.32);
         }
-        .btn-msg {
-            flex: 0 0 auto; border: 1px solid var(--border); cursor: pointer;
-            background: var(--bg-card); color: var(--text-primary);
-            padding: 13px 16px; border-radius: 12px; font-size: 1.1rem;
-        }
 
         .enc-banner {
             margin: 18px 18px 4px;
@@ -146,11 +141,6 @@
             background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
             backdrop-filter: blur(6px);
             display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
-        }
-        .tile-price {
-            position: absolute; top: 8px; right: 8px;
-            background: rgba(124,92,255,0.85); padding: 3px 8px; border-radius: 14px;
-            font-size: 0.66rem; font-weight: 700;
         }
         .tile-enc {
             position: absolute; bottom: 8px; left: 8px;
@@ -224,12 +214,11 @@
         <div class="stats">
             <div class="stat"><div class="num" id="sPosts"></div><div class="lbl">Posts</div></div>
             <div class="stat"><div class="num" id="sLikes"></div><div class="lbl">Likes</div></div>
-            <div class="stat"><div class="num" id="sSubs"></div><div class="lbl">Subscribers</div></div>
+            <div class="stat"><div class="num" id="sFollowers"></div><div class="lbl">Followers</div></div>
         </div>
 
         <div class="actions">
-            <button class="btn-sub" id="subBtn">🔓 Subscribe to unlock · <span id="subPrice"></span></button>
-            <button class="btn-msg" id="msgBtn" aria-label="Message">💬</button>
+            <button class="btn-sub" id="unlockBtn">🔓 Unlock with delock</button>
         </div>
     </section>
 
@@ -288,8 +277,7 @@
         document.getElementById('cBio').textContent = creator.bio;
         document.getElementById('sPosts').textContent = creator.postCount;
         document.getElementById('sLikes').textContent = creator.likes;
-        document.getElementById('sSubs').textContent = creator.subs;
-        document.getElementById('subPrice').textContent = creator.price + '/mo';
+        document.getElementById('sFollowers').textContent = creator.followers;
 
         // ----- Locked grid -----
         const grid = document.getElementById('grid');
@@ -298,7 +286,6 @@
             tile.className = 'tile';
             tile.innerHTML = `
                 <div class="tile-blur" style="background:${V.grad(post.g)}"></div>
-                <div class="tile-price">${post.price}</div>
                 <div class="tile-overlay"><div class="tile-lock">🔒</div></div>
                 <div class="tile-enc">🔐 Encrypted</div>`;
             tile.addEventListener('click', openSheet);
@@ -320,8 +307,7 @@
             document.body.style.overflow = '';
         }
         backdrop.addEventListener('click', closeSheet);
-        document.getElementById('subBtn').addEventListener('click', openSheet);
-        document.getElementById('msgBtn').addEventListener('click', openSheet);
+        document.getElementById('unlockBtn').addEventListener('click', openSheet);
         document.getElementById('mediaTab').addEventListener('click', openSheet);
 
         // ----- Sticky top bar style on scroll -----
