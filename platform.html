@@ -105,8 +105,9 @@
             width: 100%; height: 100%; border-radius: 50%;
             border: 2px solid var(--bg-dark);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: 700; color: #fff;
+            font-size: 1.5rem; font-weight: 700; color: #fff; overflow: hidden;
         }
+        .av { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
         .story-name {
             font-size: 0.7rem; color: var(--text-secondary);
             margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -365,7 +366,7 @@
             s.style.color = 'inherit';
             s.innerHTML = `
                 <div class="story-ring">
-                    <div class="story-avatar" style="background:${V.grad(c.g)}">${c.init}</div>
+                    <div class="story-avatar" style="background:${V.grad(c.g)}">${V.avatarInner(c)}</div>
                 </div>
                 <div class="story-name">${c.name}</div>`;
             storiesEl.appendChild(s);
@@ -380,7 +381,7 @@
             article.className = 'post';
             article.innerHTML = `
                 <a class="post-head" href="${profileUrl(c.id)}" style="text-decoration:none;color:inherit">
-                    <div class="post-avatar" style="background:${V.grad(c.g)}">${c.init}</div>
+                    <div class="post-avatar" style="background:${V.grad(c.g)}">${V.avatarInner(c)}</div>
                     <div class="post-meta">
                         <div class="post-name">${c.name} <span class="verified">✔</span></div>
                         <div class="post-handle">${c.handle} · ${p.time}</div>

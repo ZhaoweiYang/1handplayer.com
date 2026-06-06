@@ -11,6 +11,19 @@
 
     const creators = [
         {
+            id: 'rina', name: 'Rina', handle: '@rina', init: 'R', g: 8,
+            photo: 'images/rina.jpg',
+            bio: 'Tokyo street style 🖤 New restricted drops every week.',
+            followers: '88k', postCount: 24, likes: '1.5M',
+            posts: [
+                { likes: '2.7k', cap: 'Streetwear set 🖤 Encrypted — unlock the full shoot', time: '1h ago', g: 9 },
+                { likes: '1.9k', cap: 'Café day ☕ Encrypted', time: '1d ago', g: 2 },
+                { likes: '2.2k', cap: 'Night out 🌃 Unlock to view', time: '2d ago', g: 5 },
+                { likes: '1.4k', cap: 'Mirror selfies 🪞 Encrypted', time: '4d ago', g: 0 },
+                { likes: '3.0k', cap: 'Beach trip 🏖️ Unlock the full set', time: '1w ago', g: 3 }
+            ]
+        },
+        {
             id: 'luna', name: 'Luna', handle: '@luna_official', init: 'L', g: 0,
             bio: 'Fashion & lifestyle creator ✨ New encrypted drops every week.',
             followers: '128k', postCount: 42, likes: '2.4M',
@@ -82,8 +95,8 @@
 
     // Curated home feed: one highlighted post per creator.
     const homeFeed = [
-        { id: 'luna', p: 0 }, { id: 'aria', p: 0 }, { id: 'mia', p: 0 },
-        { id: 'nova', p: 0 }, { id: 'sofia', p: 0 }
+        { id: 'rina', p: 0 }, { id: 'luna', p: 0 }, { id: 'aria', p: 0 },
+        { id: 'mia', p: 0 }, { id: 'nova', p: 0 }, { id: 'sofia', p: 0 }
     ];
 
     // Generic fan reviews (praise) shown as a scrolling wall on profiles.
@@ -111,5 +124,13 @@
         return creators.find((c) => c.id === id) || null;
     }
 
-    window.VAULT = { gradients, creators, homeFeed, reviews, grad, getCreator };
+    // Avatar contents: a real photo when available, otherwise the initial.
+    // If the photo fails to load it falls back to the initial letter.
+    function avatarInner(c) {
+        return c.photo
+            ? `<img class="av" src="${c.photo}" alt="${c.name}" onerror="this.outerHTML='${c.init}'">`
+            : c.init;
+    }
+
+    window.VAULT = { gradients, creators, homeFeed, reviews, grad, getCreator, avatarInner };
 })();

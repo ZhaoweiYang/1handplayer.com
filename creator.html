@@ -114,8 +114,10 @@
             width: 88px; height: 88px; border-radius: 50%;
             border: 3px solid var(--bg-dark);
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.1rem; font-weight: 700; color: #fff;
+            font-size: 2.1rem; font-weight: 700; color: #fff; overflow: hidden;
         }
+        .av { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }
+        .cover-slide img.av { object-position: center 28%; }
         .name-row { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
         .name-row h1 { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.5px; }
         .verified { color: var(--accent); font-size: 1rem; }
@@ -321,13 +323,20 @@
         // ----- Cover carousel (multiple rotating background images) -----
         const cover = document.getElementById('cover');
         const coverDots = document.getElementById('coverDots');
-        const coverIdx = [creator.g, creator.g + 2, creator.g + 5, creator.g + 7];
+        const coverSlides = [];
+        if (creator.photo) coverSlides.push({ photo: creator.photo });
+        [creator.g, creator.g + 2, creator.g + 5, creator.g + 7].forEach((gi) => coverSlides.push({ g: gi }));
         const slides = [];
         const dots = [];
-        coverIdx.forEach((gi, i) => {
+        coverSlides.forEach((sl, i) => {
             const slide = document.createElement('div');
             slide.className = 'cover-slide' + (i === 0 ? ' active' : '');
-            slide.style.background = V.grad(gi);
+            if (sl.photo) {
+                slide.style.background = V.grad(creator.g); // fallback if photo missing
+                slide.innerHTML = `<img class="av" src="${sl.photo}" alt="${creator.name}" onerror="this.remove()">`;
+            } else {
+                slide.style.background = V.grad(sl.g);
+            }
             cover.insertBefore(slide, coverDots);
             slides.push(slide);
 
@@ -349,7 +358,7 @@
 
         const avatar = document.getElementById('avatar');
         avatar.style.background = V.grad(creator.g);
-        avatar.textContent = creator.init;
+        avatar.innerHTML = V.avatarInner(creator);
         document.getElementById('cName').textContent = creator.name;
         document.getElementById('cHandle').textContent = creator.handle;
         document.getElementById('cBio').textContent = creator.bio;
