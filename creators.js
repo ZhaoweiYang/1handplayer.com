@@ -86,6 +86,22 @@
         { id: 'nova', p: 0 }, { id: 'sofia', p: 0 }
     ];
 
+    // Generic fan reviews (praise) shown as a scrolling wall on profiles.
+    const reviews = [
+        { name: 'Mike', text: 'Her body is absolutely unreal 🔥' },
+        { name: 'James', text: 'Stunning — best on the whole app 😍' },
+        { name: 'Leo', text: 'Perfect figure, I literally can’t look away' },
+        { name: 'Daniel', text: 'Unbeatable. Worth every single second 💎' },
+        { name: 'Chris', text: 'Gorgeous beyond words 🤤' },
+        { name: 'Alex', text: '10/10 body, 10/10 everything' },
+        { name: 'Ryan', text: 'The most beautiful creator I follow' },
+        { name: 'Tom', text: 'Flawless figure 😩🔥' },
+        { name: 'Kevin', text: 'Insane curves, an absolute goddess 👑' },
+        { name: 'Nate', text: 'No one else even comes close' },
+        { name: 'Sam', text: 'So hot it should be illegal 🥵' },
+        { name: 'Jay', text: 'Best body I’ve ever seen, hands down' }
+    ];
+
     function grad(i) {
         const pair = gradients[i % gradients.length];
         return `linear-gradient(135deg, ${pair[0]}, ${pair[1]})`;
@@ -95,5 +111,5 @@
         return creators.find((c) => c.id === id) || null;
     }
 
-    window.VAULT = { gradients, creators, homeFeed, grad, getCreator };
+    window.VAULT = { gradients, creators, homeFeed, reviews, grad, getCreator };
 })();
