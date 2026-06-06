@@ -13,6 +13,7 @@
         {
             id: 'rina', name: 'Rina', handle: '@rina', init: 'R', g: 8,
             photo: 'images/rina.jpg',
+            covers: ['images/rina-bg1.jpg', 'images/rina-bg2.jpg'],
             bio: 'Tokyo street style 🖤 New restricted drops every week.',
             followers: '88k', postCount: 24, likes: '1.5M',
             posts: [
