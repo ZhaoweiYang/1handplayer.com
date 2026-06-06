@@ -288,9 +288,16 @@
         // ----- Cover carousel (multiple rotating background images) -----
         const cover = document.getElementById('cover');
         const coverDots = document.getElementById('coverDots');
-        const coverSlides = [];
-        if (creator.photo) coverSlides.push({ photo: creator.photo });
-        [creator.g, creator.g + 2, creator.g + 5, creator.g + 7].forEach((gi) => coverSlides.push({ g: gi }));
+        // Cover slides: use the creator's uploaded `covers` images if provided,
+        // otherwise fall back to the profile photo + gradient placeholders.
+        let coverSlides;
+        if (creator.covers && creator.covers.length) {
+            coverSlides = creator.covers.map((src) => ({ photo: src }));
+        } else {
+            coverSlides = [];
+            if (creator.photo) coverSlides.push({ photo: creator.photo });
+            [creator.g, creator.g + 2, creator.g + 5, creator.g + 7].forEach((gi) => coverSlides.push({ g: gi }));
+        }
         const slides = [];
         const dots = [];
         coverSlides.forEach((sl, i) => {
@@ -319,7 +326,11 @@
             dots[coverCur].classList.add('active');
         }
         dots.forEach((d, i) => d.addEventListener('click', () => showCover(i)));
-        setInterval(() => showCover(coverCur + 1), 3500);
+        if (slides.length > 1) {
+            setInterval(() => showCover(coverCur + 1), 3500);
+        } else {
+            coverDots.style.display = 'none'; // single image: no rotation/dots
+        }
 
         const avatar = document.getElementById('avatar');
         avatar.style.background = V.grad(creator.g);
