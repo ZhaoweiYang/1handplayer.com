@@ -356,61 +356,45 @@
         <p class="sheet-note">Decryption powered by delock</p>
     </div>
 
+    <script src="creators.js"></script>
     <script>
-        // ----- Demo data (placeholder creators & locked posts) -----
-        const gradients = [
-            ['#FF4D8D', '#7C5CFF'], ['#FF8A00', '#FF4D8D'], ['#00C6FB', '#7C5CFF'],
-            ['#FF4D8D', '#FFC371'], ['#11998E', '#38EF7D'], ['#7C5CFF', '#00C6FB'],
-            ['#F857A6', '#FF5858'], ['#4E54C8', '#8F94FB']
-        ];
-        const creators = [
-            { name: 'Luna', handle: '@luna_official', init: 'L' },
-            { name: 'Aria', handle: '@aria.x', init: 'A' },
-            { name: 'Mia', handle: '@mia_studio', init: 'M' },
-            { name: 'Yuki', handle: '@yuki.jp', init: 'Y' },
-            { name: 'Sofia', handle: '@sofia', init: 'S' },
-            { name: 'Nova', handle: '@nova_vip', init: 'N' }
-        ];
-        const posts = [
-            { c: 0, price: '$5.99', likes: '2.4k', cap: 'This week’s exclusive shoot 📸 Encrypted — unlock to see the full set', time: '2h ago' },
-            { c: 1, price: '$3.99', likes: '1.8k', cap: 'Full behind-the-scenes 🎬 Encrypted content', time: '5h ago' },
-            { c: 2, price: '$6.99', likes: '3.1k', cap: '12 HD photos 🔒 Unlock members only', time: 'Yesterday' },
-            { c: 4, price: '$2.99', likes: '980', cap: 'DM-only bonus clip 💌 Unlock to view', time: 'Yesterday' }
-        ];
+        const V = window.VAULT;
+        const profileUrl = (id) => `creator.html?id=${encodeURIComponent(id)}`;
 
-        const grad = (i) => `linear-gradient(135deg, ${gradients[i % gradients.length][0]}, ${gradients[i % gradients.length][1]})`;
-
-        // ----- Render stories -----
+        // ----- Render stories (tap a creator to open their profile) -----
         const storiesEl = document.getElementById('stories');
-        creators.forEach((c, i) => {
-            const s = document.createElement('div');
+        V.creators.forEach((c) => {
+            const s = document.createElement('a');
             s.className = 'story';
+            s.href = profileUrl(c.id);
+            s.style.textDecoration = 'none';
+            s.style.color = 'inherit';
             s.innerHTML = `
                 <div class="story-ring">
-                    <div class="story-avatar" style="background:${grad(i)}">${c.init}</div>
+                    <div class="story-avatar" style="background:${V.grad(c.g)}">${c.init}</div>
                 </div>
                 <div class="story-name">${c.name}</div>`;
-            s.addEventListener('click', openSheet);
             storiesEl.appendChild(s);
         });
 
         // ----- Render feed -----
         const feedEl = document.getElementById('feed');
-        posts.forEach((p, idx) => {
-            const c = creators[p.c];
+        V.homeFeed.forEach((ref) => {
+            const c = V.getCreator(ref.id);
+            const p = c.posts[ref.p];
             const article = document.createElement('article');
             article.className = 'post';
             article.innerHTML = `
-                <div class="post-head">
-                    <div class="post-avatar" style="background:${grad(p.c)}">${c.init}</div>
+                <a class="post-head" href="${profileUrl(c.id)}" style="text-decoration:none;color:inherit">
+                    <div class="post-avatar" style="background:${V.grad(c.g)}">${c.init}</div>
                     <div class="post-meta">
                         <div class="post-name">${c.name} <span class="verified">✔</span></div>
                         <div class="post-handle">${c.handle} · ${p.time}</div>
                     </div>
-                    <button class="post-follow">Follow</button>
-                </div>
-                <div class="post-media" data-creator="${c.name}">
-                    <div class="media-blur" style="background:${grad(idx + 2)}"></div>
+                    <button class="post-follow" type="button">Follow</button>
+                </a>
+                <div class="post-media">
+                    <div class="media-blur" style="background:${V.grad(p.g)}"></div>
                     <div class="enc-chip">🔐 Encrypted</div>
                     <div class="price-chip">${p.price}</div>
                     <div class="media-overlay">
@@ -428,10 +412,19 @@
                     <span class="act">🔖</span>
                 </div>
                 <div class="post-caption">
-                    <span class="cap-name">${c.name}</span><span class="cap-text">${p.cap}</span>
+                    <a href="${profileUrl(c.id)}" class="cap-name" style="color:inherit;text-decoration:none">${c.name}</a><span class="cap-text">${p.cap}</span>
                 </div>`;
-            // Any click on locked media or unlock button opens the sheet
+            // Tapping the locked media opens the unlock sheet (don't navigate)
             article.querySelector('.post-media').addEventListener('click', openSheet);
+            // Follow button shouldn't navigate to the profile; toggle label instead
+            const followBtn = article.querySelector('.post-follow');
+            followBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const on = followBtn.textContent === 'Follow';
+                followBtn.textContent = on ? 'Following' : 'Follow';
+                followBtn.style.background = on ? 'transparent' : '';
+                followBtn.style.border = on ? '1px solid var(--border)' : '';
+            });
             feedEl.appendChild(article);
         });
 
