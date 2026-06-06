@@ -60,7 +60,7 @@
         .topbar.scrolled .topbar-title { opacity: 1; }
 
         /* Cover carousel */
-        .cover { height: 168px; width: 100%; position: relative; overflow: hidden; }
+        .cover { height: 168px; width: 100%; position: relative; overflow: hidden; user-select: none; touch-action: pan-y; }
         .cover-slide {
             position: absolute; inset: 0; opacity: 0;
             transition: opacity 0.8s ease;
@@ -317,6 +317,7 @@
             dots.push(dot);
         });
         let coverCur = 0;
+        let coverTimer = null;
         function showCover(n) {
             slides[coverCur].classList.remove('active');
             dots[coverCur].classList.remove('active');
@@ -324,9 +325,27 @@
             slides[coverCur].classList.add('active');
             dots[coverCur].classList.add('active');
         }
-        dots.forEach((d, i) => d.addEventListener('click', () => showCover(i)));
+        function startAuto() {
+            if (slides.length < 2) return;
+            clearInterval(coverTimer);
+            coverTimer = setInterval(() => showCover(coverCur + 1), 3500);
+        }
+        dots.forEach((d, i) => d.addEventListener('click', () => { showCover(i); startAuto(); }));
+
         if (slides.length > 1) {
-            setInterval(() => showCover(coverCur + 1), 3500);
+            // Manual swipe (touch) / drag (mouse) to move between cover images
+            let sx = null;
+            const onStart = (x) => { sx = x; };
+            const onEnd = (x) => {
+                if (sx === null) return;
+                const dx = x - sx; sx = null;
+                if (Math.abs(dx) > 40) { showCover(coverCur + (dx < 0 ? 1 : -1)); startAuto(); }
+            };
+            cover.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
+            cover.addEventListener('touchend', (e) => onEnd(e.changedTouches[0].clientX), { passive: true });
+            cover.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'touch') onStart(e.clientX); });
+            window.addEventListener('pointerup', (e) => { if (e.pointerType !== 'touch') onEnd(e.clientX); });
+            startAuto();
         } else {
             coverDots.style.display = 'none'; // single image: no rotation/dots
         }
