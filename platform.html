@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0a0a">
-    <title>Vault · 加密创作者平台</title>
-    <meta name="description" content="加密创作者内容平台。所有内容均经过加密保护，使用 delock App 解锁查看。An encrypted creator content platform — every post is encrypted, unlock with the delock app.">
+    <title>Vault · Encrypted Creator Platform</title>
+    <meta name="description" content="An encrypted creator content platform — every post is encrypted. Unlock with the delock app.">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -26,7 +26,7 @@
         html, body { overscroll-behavior-y: none; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-primary);
             line-height: 1.5;
@@ -302,8 +302,8 @@
     <header class="appbar">
         <div class="brand">Vault<span class="dot">.</span></div>
         <div class="appbar-actions">
-            <button class="icon-btn" aria-label="搜索 Search">🔍</button>
-            <button class="icon-btn" aria-label="通知 Notifications">🔔</button>
+            <button class="icon-btn" aria-label="Search">🔍</button>
+            <button class="icon-btn" aria-label="Notifications">🔔</button>
         </div>
     </header>
 
@@ -311,8 +311,8 @@
     <div class="enc-banner">
         <span class="lock">🔐</span>
         <div>
-            <strong>本平台所有内容均已加密</strong>
-            <small>All content is end-to-end encrypted · Unlock with the delock app</small>
+            <strong>All content on this platform is encrypted</strong>
+            <small>End-to-end encrypted · Unlock with the delock app</small>
         </div>
     </div>
 
@@ -324,11 +324,11 @@
 
     <!-- Bottom navigation -->
     <nav class="bottom-nav">
-        <button class="nav-item active"><span style="font-size:1.4rem">🏠</span><span>首页</span></button>
-        <button class="nav-item"><span style="font-size:1.4rem">🧭</span><span>发现</span></button>
+        <button class="nav-item active"><span style="font-size:1.4rem">🏠</span><span>Home</span></button>
+        <button class="nav-item"><span style="font-size:1.4rem">🧭</span><span>Discover</span></button>
         <button class="nav-item"><div class="nav-fab">+</div></button>
-        <button class="nav-item"><span style="font-size:1.4rem">💬</span><span>消息</span></button>
-        <button class="nav-item"><span style="font-size:1.4rem">👤</span><span>我的</span></button>
+        <button class="nav-item"><span style="font-size:1.4rem">💬</span><span>Messages</span></button>
+        <button class="nav-item"><span style="font-size:1.4rem">👤</span><span>Profile</span></button>
     </nav>
 
     <!-- Unlock bottom sheet -->
@@ -336,24 +336,24 @@
     <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
         <div class="sheet-handle"></div>
         <div class="sheet-icon">🔓</div>
-        <h3 id="sheetTitle">此内容已加密</h3>
-        <p class="sub-en">This content is encrypted · Unlock with delock</p>
+        <h3 id="sheetTitle">This content is encrypted</h3>
+        <p class="sub-en">Unlock it with the delock app</p>
         <ul class="sheet-steps">
             <li>
                 <span class="step-num">1</span>
-                <span class="step-txt">开通 delock 解锁服务<small>Get a delock subscription</small></span>
+                <span class="step-txt">Get a delock subscription<small>One plan unlocks the whole platform</small></span>
             </li>
             <li>
                 <span class="step-num">2</span>
-                <span class="step-txt">用 delock App 一键解密内容<small>Decrypt the content with the delock app</small></span>
+                <span class="step-txt">Decrypt the content with the delock app<small>One tap to unlock any post</small></span>
             </li>
             <li>
                 <span class="step-num">3</span>
-                <span class="step-txt">即可无限畅享高清原图与视频<small>Enjoy full-quality photos &amp; videos</small></span>
+                <span class="step-txt">Enjoy full-quality photos &amp; videos<small>Unlimited, anytime</small></span>
             </li>
         </ul>
-        <a href="delock.html" class="sheet-cta" id="sheetCta">🔑 去付费开通 delock · Unlock now</a>
-        <p class="sheet-note">由 delock 提供端到端解密服务 · Decryption powered by delock</p>
+        <a href="delock.html" class="sheet-cta" id="sheetCta">🔑 Unlock with delock</a>
+        <p class="sheet-note">Decryption powered by delock</p>
     </div>
 
     <script>
@@ -372,10 +372,10 @@
             { name: 'Nova', handle: '@nova_vip', init: 'N' }
         ];
         const posts = [
-            { c: 0, price: '¥39', likes: '2.4k', cap: '本周独家拍摄 📸 已加密，解锁查看全集', time: '2小时前' },
-            { c: 1, price: '¥29', likes: '1.8k', cap: '幕后花絮全收录 🎬 Encrypted behind-the-scenes', time: '5小时前' },
-            { c: 2, price: '¥49', likes: '3.1k', cap: '高清写真 12 张 🔒 仅限解锁会员', time: '昨天' },
-            { c: 4, price: '¥19', likes: '980', cap: '私信福利视频 💌 unlock to view', time: '昨天' }
+            { c: 0, price: '$5.99', likes: '2.4k', cap: 'This week’s exclusive shoot 📸 Encrypted — unlock to see the full set', time: '2h ago' },
+            { c: 1, price: '$3.99', likes: '1.8k', cap: 'Full behind-the-scenes 🎬 Encrypted content', time: '5h ago' },
+            { c: 2, price: '$6.99', likes: '3.1k', cap: '12 HD photos 🔒 Unlock members only', time: 'Yesterday' },
+            { c: 4, price: '$2.99', likes: '980', cap: 'DM-only bonus clip 💌 Unlock to view', time: 'Yesterday' }
         ];
 
         const grad = (i) => `linear-gradient(135deg, ${gradients[i % gradients.length][0]}, ${gradients[i % gradients.length][1]})`;
@@ -407,22 +407,22 @@
                         <div class="post-name">${c.name} <span class="verified">✔</span></div>
                         <div class="post-handle">${c.handle} · ${p.time}</div>
                     </div>
-                    <button class="post-follow">关注</button>
+                    <button class="post-follow">Follow</button>
                 </div>
                 <div class="post-media" data-creator="${c.name}">
                     <div class="media-blur" style="background:${grad(idx + 2)}"></div>
-                    <div class="enc-chip">🔐 已加密 Encrypted</div>
+                    <div class="enc-chip">🔐 Encrypted</div>
                     <div class="price-chip">${p.price}</div>
                     <div class="media-overlay">
                         <div class="lock-circle">🔒</div>
-                        <div class="enc-label">内容已加密</div>
-                        <div class="enc-sub">需使用 delock 解锁 · delock required</div>
-                        <button class="unlock-btn">🔓 解锁查看 · Unlock</button>
+                        <div class="enc-label">Content is encrypted</div>
+                        <div class="enc-sub">Requires delock to unlock</div>
+                        <button class="unlock-btn">🔓 Unlock</button>
                     </div>
                 </div>
                 <div class="post-actions">
                     <span class="act">🤍 <small>${p.likes}</small></span>
-                    <span class="act">💬 <small>评论</small></span>
+                    <span class="act">💬 <small>Comment</small></span>
                     <span class="act">↗️</span>
                     <span class="spacer"></span>
                     <span class="act">🔖</span>
