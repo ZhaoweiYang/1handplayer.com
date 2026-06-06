@@ -80,33 +80,32 @@
         }
         .cover-dot.active { background: #fff; width: 16px; border-radius: 3px; }
 
-        /* Fan reviews (scrolling praise) */
-        .reviews { padding: 16px 0 2px; overflow: hidden; }
-        .reviews-title {
-            padding: 0 18px 10px; font-size: 0.95rem; font-weight: 700;
-            display: flex; align-items: center; gap: 6px;
+        /* Fan reviews as floating danmaku over the locked grid */
+        .danmaku {
+            position: absolute; inset: 0; overflow: hidden;
+            pointer-events: none; z-index: 6;
         }
-        .reviews-title small { color: var(--text-secondary); font-weight: 400; font-size: 0.74rem; }
-        .rv-row { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
-        .rv-row + .rv-row { margin-top: 10px; }
-        .rv-track { display: flex; gap: 10px; width: max-content; padding: 0 10px; }
-        .rv-track.left { animation: rv-scroll 32s linear infinite; }
-        .rv-track.right { animation: rv-scroll 38s linear infinite reverse; }
-        @keyframes rv-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-        .review-card {
-            flex: 0 0 auto; width: 232px;
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 14px; padding: 11px 13px;
+        .bullet {
+            position: absolute; left: 0; top: var(--lane); white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 20px; padding: 5px 13px 5px 5px;
+            color: #fff; font-size: 0.8rem;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+            transform: translateX(100vw); will-change: transform;
+            animation: bullet-fly var(--dur) linear var(--delay) infinite;
         }
-        .rv-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
-        .rv-avatar {
-            width: 30px; height: 30px; border-radius: 50%; flex: 0 0 auto;
+        .bullet .b-av {
+            width: 24px; height: 24px; border-radius: 50%; flex: 0 0 auto;
             display: flex; align-items: center; justify-content: center;
-            font-size: 0.82rem; font-weight: 700; color: #fff;
+            font-size: 0.72rem; font-weight: 700; color: #fff;
         }
-        .rv-name { font-size: 0.82rem; font-weight: 600; }
-        .rv-stars { font-size: 0.66rem; color: #FFC83D; letter-spacing: 1px; }
-        .rv-text { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
+        .bullet .b-stars { color: #FFC83D; font-size: 0.6rem; letter-spacing: 1px; }
+        @keyframes bullet-fly {
+            from { transform: translateX(100vw); }
+            to   { transform: translateX(-130%); }
+        }
+        @media (prefers-reduced-motion: reduce) { .bullet { animation: none; display: none; } }
 
         /* Profile header */
         .profile { padding: 0 18px; margin-top: -44px; position: relative; z-index: 2; }
@@ -152,7 +151,7 @@
         /* Locked grid */
         .grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 3px; padding: 3px;
+            gap: 3px; padding: 3px; position: relative;
         }
         .tile {
             position: relative; aspect-ratio: 1 / 1; overflow: hidden; cursor: pointer;
@@ -243,18 +242,14 @@
         </div>
     </section>
 
-    <section class="reviews">
-        <div class="reviews-title">💬 What fans are saying <small>· verified unlockers</small></div>
-        <div class="rv-row"><div class="rv-track left" id="rvRow1"></div></div>
-        <div class="rv-row"><div class="rv-track right" id="rvRow2"></div></div>
-    </section>
-
     <div class="tabs">
         <button class="tab active">🔒 Posts</button>
         <button class="tab" id="mediaTab">🖼️ Media</button>
     </div>
 
-    <div class="grid" id="grid"></div>
+    <div class="grid" id="grid">
+        <div class="danmaku" id="danmaku"></div>
+    </div>
 
     <!-- Unlock bottom sheet -->
     <div class="sheet-backdrop" id="sheetBackdrop"></div>
@@ -345,27 +340,23 @@
             grid.appendChild(tile);
         });
 
-        // ----- Fan reviews (scrolling praise) -----
-        function reviewCard(r, i) {
-            return `
-                <div class="review-card">
-                    <div class="rv-head">
-                        <div class="rv-avatar" style="background:${V.grad(i + 1)}">${r.name[0]}</div>
-                        <div>
-                            <div class="rv-name">${r.name}</div>
-                            <div class="rv-stars">★★★★★</div>
-                        </div>
-                    </div>
-                    <div class="rv-text">${r.text}</div>
-                </div>`;
-        }
-        const half1 = V.reviews.slice(0, Math.ceil(V.reviews.length / 2));
-        const half2 = V.reviews.slice(Math.ceil(V.reviews.length / 2));
-        // Duplicate each row's content so the marquee loops seamlessly (-50%).
-        document.getElementById('rvRow1').innerHTML =
-            (half1.map(reviewCard).join('') + half1.map(reviewCard).join(''));
-        document.getElementById('rvRow2').innerHTML =
-            (half2.map(reviewCard).join('') + half2.map(reviewCard).join(''));
+        // ----- Fan reviews as floating danmaku over the locked grid -----
+        const danmaku = document.getElementById('danmaku');
+        const lanes = [3, 14, 25, 37, 49, 61, 73, 85];
+        V.reviews.forEach((r, i) => {
+            const b = document.createElement('div');
+            b.className = 'bullet';
+            const dur = 11 + (i % 4) * 1.7 + Math.random() * 3;     // 11–20s, varied per lane
+            const delay = -(Math.random() * dur);                    // stagger; many already mid-flight
+            b.style.setProperty('--lane', lanes[i % lanes.length] + '%');
+            b.style.setProperty('--dur', dur.toFixed(1) + 's');
+            b.style.setProperty('--delay', delay.toFixed(1) + 's');
+            b.innerHTML = `
+                <span class="b-av" style="background:${V.grad(i + 1)}">${r.name[0]}</span>
+                <span class="b-stars">★★★★★</span>
+                <span>${r.text}</span>`;
+            danmaku.appendChild(b);
+        });
 
         // ----- Bottom sheet + actions -----
         const backdrop = document.getElementById('sheetBackdrop');
