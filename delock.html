@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a0a0a">
     <title>delock · Unlock encrypted content</title>
-    <meta name="description" content="delock — instantly decrypt encrypted content on Vault. Subscribe to unlock unlimited HD photos and videos.">
+    <meta name="description" content="delock — instantly decrypt encrypted content. Subscribe to unlock unlimited HD photos and videos.">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
@@ -22,232 +22,179 @@
             --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
 
+        html, body { height: 100%; overflow: hidden; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-dark);
             color: var(--text-primary);
-            line-height: 1.5;
+            line-height: 1.4;
             max-width: 480px;
             margin: 0 auto;
-            min-height: 100vh;
-            padding-bottom: calc(110px + var(--safe-bottom));
+            height: 100vh; height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
         }
 
         /* Top bar */
         .topbar {
-            position: sticky; top: 0; z-index: 50;
-            display: flex; align-items: center; gap: 12px;
-            padding: calc(12px + var(--safe-top)) 16px 12px;
-            background: rgba(10,10,10,0.92);
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--border);
+            flex: 0 0 auto;
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 16px;
         }
-        .back { background: none; border: none; color: #fff; font-size: 1.4rem; cursor: pointer; line-height: 1; text-decoration: none; }
-        .topbar-title { font-weight: 700; font-size: 1.05rem; }
+        .back { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; line-height: 1; text-decoration: none; }
+        .topbar-title { font-weight: 700; font-size: 1rem; }
+
+        /* Main fills remaining height and spreads content */
+        main {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 4px 20px 14px;
+            overflow: hidden;
+        }
 
         /* Hero */
-        .hero { text-align: center; padding: 36px 24px 20px; }
+        .hero { text-align: center; }
         .app-logo {
-            width: 88px; height: 88px; border-radius: 24px; margin: 0 auto 18px;
+            width: 58px; height: 58px; border-radius: 16px; margin: 0 auto 8px;
             background: linear-gradient(135deg, var(--accent), var(--primary));
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.8rem;
-            box-shadow: 0 14px 40px rgba(124,92,255,0.45);
+            font-size: 1.9rem;
+            box-shadow: 0 10px 28px rgba(124,92,255,0.45);
         }
-        .hero h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
+        .hero h1 { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.5px; }
         .hero h1 .dot { color: var(--primary); }
-        .hero .pitch { color: var(--text-secondary); font-size: 0.95rem; margin-top: 8px; }
-        .hero .pitch-en { color: #6e6e6e; font-size: 0.78rem; margin-top: 2px; }
+        .hero .pitch { color: var(--text-secondary); font-size: 0.82rem; margin-top: 3px; }
 
-        /* Feature list */
-        .features { padding: 8px 20px 24px; }
+        /* Features: single compact row */
+        .features { display: flex; gap: 8px; }
         .feature {
-            display: flex; gap: 14px; align-items: center;
-            padding: 14px; margin-bottom: 10px;
+            flex: 1; text-align: center;
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 12px; padding: 9px 4px;
         }
-        .feature .fi {
-            flex: 0 0 auto; width: 44px; height: 44px; border-radius: 12px;
-            background: rgba(124,92,255,0.16);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem;
-        }
-        .feature h4 { font-size: 0.95rem; }
-        .feature p { font-size: 0.78rem; color: var(--text-secondary); }
+        .feature .fi { font-size: 1.15rem; }
+        .feature span { display: block; font-size: 0.62rem; color: var(--text-secondary); margin-top: 3px; line-height: 1.2; }
 
         /* Plans */
-        .plans { padding: 4px 20px; }
-        .plans h2 { font-size: 1.15rem; margin-bottom: 4px; }
-        .plans .sub { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 16px; }
+        .plans-head { text-align: center; font-size: 0.78rem; color: var(--text-secondary); }
+        .plans-head b { color: var(--text-primary); font-size: 0.92rem; display: block; }
+        .plans { display: flex; flex-direction: column; gap: 9px; }
         .plan {
             position: relative;
-            display: flex; align-items: center; gap: 14px;
-            padding: 16px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 14px;
             background: var(--bg-card);
             border: 2px solid var(--border);
-            border-radius: 16px; cursor: pointer;
+            border-radius: 14px; cursor: pointer;
             transition: border-color 0.18s, background 0.18s;
         }
         .plan.selected { border-color: var(--primary); background: rgba(255,77,141,0.06); }
         .plan .radio {
-            flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+            flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%;
             border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
         }
         .plan.selected .radio { border-color: var(--primary); }
-        .plan.selected .radio::after {
-            content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--primary);
-        }
+        .plan.selected .radio::after { content: ''; width: 11px; height: 11px; border-radius: 50%; background: var(--primary); }
         .plan-info { flex: 1; }
-        .plan-info .pname { font-weight: 700; font-size: 1rem; }
-        .plan-info .pdesc { font-size: 0.76rem; color: var(--text-secondary); }
+        .plan-info .pname { font-weight: 700; font-size: 0.95rem; }
+        .plan-info .pdesc { font-size: 0.72rem; color: var(--text-secondary); }
         .plan-price { text-align: right; }
-        .plan-price .amount { font-weight: 800; font-size: 1.15rem; }
-        .plan-price .period { font-size: 0.72rem; color: var(--text-secondary); }
-        .plan-price .old { font-size: 0.72rem; color: #6e6e6e; text-decoration: line-through; }
+        .plan-price .amount { font-weight: 800; font-size: 1.05rem; }
+        .plan-price .period { font-size: 0.68rem; color: var(--text-secondary); }
+        .plan-price .old { font-size: 0.68rem; color: #6e6e6e; text-decoration: line-through; }
         .badge-best {
-            position: absolute; top: -10px; right: 14px;
+            position: absolute; top: -9px; right: 12px;
             background: linear-gradient(135deg, var(--primary), var(--accent));
-            font-size: 0.66rem; font-weight: 700; padding: 3px 10px; border-radius: 12px;
+            font-size: 0.62rem; font-weight: 700; padding: 2px 9px; border-radius: 11px;
         }
 
+        /* Footer: pay button + legal */
+        .pay-area { flex: 0 0 auto; }
         .trust {
-            display: flex; justify-content: center; gap: 18px;
-            padding: 18px 20px 4px; flex-wrap: wrap;
+            display: flex; justify-content: center; gap: 14px;
+            margin-bottom: 9px; flex-wrap: wrap;
         }
-        .trust span { font-size: 0.72rem; color: var(--text-secondary); display: flex; align-items: center; gap: 5px; }
-
-        .legal {
-            text-align: center; color: #6e6e6e; font-size: 0.68rem;
-            padding: 16px 28px 0; line-height: 1.6;
-        }
-        .legal a { color: var(--text-secondary); }
-
-        /* Sticky pay bar */
-        .paybar {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 480px; z-index: 60;
-            background: rgba(15,15,15,0.96);
-            backdrop-filter: blur(14px);
-            border-top: 1px solid var(--border);
-            padding: 12px 20px calc(14px + var(--safe-bottom));
-        }
+        .trust span { font-size: 0.66rem; color: var(--text-secondary); }
         .pay-btn {
             display: flex; align-items: center; justify-content: center; gap: 8px;
             width: 100%; border: none; cursor: pointer;
             background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: #fff; padding: 16px; border-radius: 14px;
-            font-size: 1.05rem; font-weight: 800;
+            color: #fff; padding: 15px; border-radius: 14px;
+            font-size: 1.02rem; font-weight: 800;
             box-shadow: 0 8px 24px rgba(255,77,141,0.4);
         }
-        .pay-sub { text-align: center; font-size: 0.7rem; color: var(--text-secondary); margin-top: 8px; }
+        .legal { text-align: center; color: #6e6e6e; font-size: 0.64rem; margin-top: 8px; line-height: 1.4; }
+        .legal a { color: var(--text-secondary); }
 
         /* Success toast */
         .toast {
-            position: fixed; left: 50%; bottom: calc(120px + var(--safe-bottom));
+            position: fixed; left: 50%; bottom: calc(96px + var(--safe-bottom));
             transform: translate(-50%, 20px);
             background: var(--bg-elevated); border: 1px solid var(--border);
-            color: #fff; padding: 14px 20px; border-radius: 14px;
-            font-size: 0.85rem; z-index: 100; max-width: 90%;
+            color: #fff; padding: 13px 18px; border-radius: 14px;
+            font-size: 0.82rem; z-index: 100; max-width: 88%; text-align: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             opacity: 0; pointer-events: none; transition: all 0.3s ease;
-            text-align: center;
         }
         .toast.show { opacity: 1; transform: translate(-50%, 0); }
     </style>
 </head>
 <body>
     <div class="topbar">
-        <a class="back" href="platform.html" aria-label="Back">‹</a>
+        <a class="back" href="javascript:history.back()" aria-label="Back">‹</a>
         <span class="topbar-title">Unlock with delock</span>
     </div>
 
-    <section class="hero">
-        <div class="app-logo">🔓</div>
-        <h1>delock<span class="dot">.</span></h1>
-        <p class="pitch">Instantly decrypt encrypted content on Vault</p>
-        <p class="pitch-en">Unlock every locked photo &amp; video in one tap</p>
-    </section>
+    <main>
+        <div class="hero">
+            <div class="app-logo">🔓</div>
+            <h1>delock<span class="dot">.</span></h1>
+            <p class="pitch">Instantly decrypt every locked photo &amp; video</p>
+        </div>
 
-    <section class="features">
-        <div class="feature">
-            <div class="fi">🔐</div>
-            <div><h4>Unlimited unlock</h4><p>Decrypt every encrypted photo and video</p></div>
+        <div class="features">
+            <div class="feature"><div class="fi">🔐</div><span>Unlimited<br>unlock</span></div>
+            <div class="feature"><div class="fi">🖼️</div><span>Full HD<br>quality</span></div>
+            <div class="feature"><div class="fi">⚡</div><span>Instant<br>decrypt</span></div>
+            <div class="feature"><div class="fi">🛡️</div><span>Private<br>&amp; safe</span></div>
         </div>
-        <div class="feature">
-            <div class="fi">🖼️</div>
-            <div><h4>Full quality</h4><p>View uncompressed HD photos and original video</p></div>
-        </div>
-        <div class="feature">
-            <div class="fi">⚡</div>
-            <div><h4>Instant decryption</h4><p>On-device, end-to-end — open and view right away</p></div>
-        </div>
-        <div class="feature">
-            <div class="fi">🛡️</div>
-            <div><h4>Private</h4><p>Keys stay on your device — no one else can peek</p></div>
-        </div>
-    </section>
 
-    <section class="plans">
-        <h2>Choose a plan</h2>
-        <p class="sub">Cancel anytime</p>
+        <div class="plans-head"><b>Choose a plan</b>Cancel anytime</div>
 
-        <div class="plan" data-plan="Weekly" data-amount="$2.99" data-unit="/wk">
-            <div class="radio"></div>
-            <div class="plan-info">
-                <div class="pname">Weekly</div>
-                <div class="pdesc">7 days unlimited unlock</div>
+        <div class="plans">
+            <div class="plan" data-plan="Weekly" data-amount="$2.99" data-unit="/wk">
+                <div class="radio"></div>
+                <div class="plan-info"><div class="pname">Weekly</div><div class="pdesc">7 days unlimited unlock</div></div>
+                <div class="plan-price"><div class="amount">$2.99</div><div class="period">/ week</div></div>
             </div>
-            <div class="plan-price">
-                <div class="amount">$2.99</div>
-                <div class="period">/ week</div>
+            <div class="plan selected" data-plan="Monthly" data-amount="$6.99" data-unit="/mo">
+                <div class="badge-best">BEST VALUE</div>
+                <div class="radio"></div>
+                <div class="plan-info"><div class="pname">Monthly</div><div class="pdesc">30 days · just $0.23/day</div></div>
+                <div class="plan-price"><div class="old">$11.99</div><div class="amount">$6.99</div><div class="period">/ month</div></div>
+            </div>
+            <div class="plan" data-plan="Yearly" data-amount="$39.99" data-unit="/yr">
+                <div class="radio"></div>
+                <div class="plan-info"><div class="pname">Yearly</div><div class="pdesc">365 days · just $0.11/day</div></div>
+                <div class="plan-price"><div class="old">$83.88</div><div class="amount">$39.99</div><div class="period">/ year</div></div>
             </div>
         </div>
 
-        <div class="plan selected" data-plan="Monthly" data-amount="$6.99" data-unit="/mo">
-            <div class="badge-best">BEST VALUE</div>
-            <div class="radio"></div>
-            <div class="plan-info">
-                <div class="pname">Monthly</div>
-                <div class="pdesc">30 days unlimited · just $0.23/day</div>
+        <div class="pay-area">
+            <div class="trust">
+                <span>🔒 Secure</span><span>↩️ Cancel anytime</span><span>⭐ 4.9</span>
             </div>
-            <div class="plan-price">
-                <div class="old">$11.99</div>
-                <div class="amount">$6.99</div>
-                <div class="period">/ month</div>
-            </div>
+            <button class="pay-btn" id="payBtn">🔑 Subscribe · <span id="payAmount">$6.99/mo</span></button>
+            <p class="legal">Auto-renews; cancel anytime in settings. By continuing you agree to the <a href="privacy.html">Privacy Policy</a> &amp; Terms.</p>
         </div>
-
-        <div class="plan" data-plan="Yearly" data-amount="$39.99" data-unit="/yr">
-            <div class="radio"></div>
-            <div class="plan-info">
-                <div class="pname">Yearly</div>
-                <div class="pdesc">365 days unlimited · just $0.11/day</div>
-            </div>
-            <div class="plan-price">
-                <div class="old">$83.88</div>
-                <div class="amount">$39.99</div>
-                <div class="period">/ year</div>
-            </div>
-        </div>
-    </section>
-
-    <div class="trust">
-        <span>🔒 Secure payment</span>
-        <span>↩️ Cancel anytime</span>
-        <span>⭐ 4.9 rating</span>
-    </div>
-
-    <p class="legal">
-        Your subscription is billed through your app store account and renews automatically.
-        Turn off auto-renew anytime in your settings. By continuing you agree to the
-        <a href="privacy.html">Privacy Policy</a> and Terms of Service.
-    </p>
-
-    <div class="paybar">
-        <button class="pay-btn" id="payBtn">🔑 Subscribe · <span id="payAmount">$6.99/mo</span></button>
-        <p class="pay-sub">By continuing you agree to the auto-renewing subscription</p>
-    </div>
+    </main>
 
     <div class="toast" id="toast">✅ Demo only — no real payment was processed</div>
 
@@ -256,13 +203,11 @@
         const payAmount = document.getElementById('payAmount');
 
         function selectPlan(el) {
-            plans.forEach(p => p.classList.remove('selected'));
+            plans.forEach((p) => p.classList.remove('selected'));
             el.classList.add('selected');
-            const amount = el.getAttribute('data-amount');
-            const unit = el.getAttribute('data-unit');
-            payAmount.textContent = amount + unit;
+            payAmount.textContent = el.getAttribute('data-amount') + el.getAttribute('data-unit');
         }
-        plans.forEach(p => p.addEventListener('click', () => selectPlan(p)));
+        plans.forEach((p) => p.addEventListener('click', () => selectPlan(p)));
 
         const toast = document.getElementById('toast');
         document.getElementById('payBtn').addEventListener('click', () => {
