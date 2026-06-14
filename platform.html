@@ -64,7 +64,38 @@
         }
         .brand .dot { color: var(--primary); }
 
-        .appbar-actions { display: flex; gap: 18px; align-items: center; }
+        .appbar-actions { display: flex; gap: 14px; align-items: center; }
+        .pts-chip {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.78rem; color: var(--text-secondary);
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+            padding: 4px 9px; border-radius: 20px;
+        }
+        .pts-chip b { color: var(--text-primary); font-weight: 700; }
+        .cost-tag {
+            position: absolute; bottom: 10px; right: 10px; z-index: 2;
+            font-size: 0.62rem; color: rgba(255,255,255,0.6);
+            background: rgba(0,0,0,0.38); border: 1px solid rgba(255,255,255,0.12);
+            padding: 3px 7px; border-radius: 12px;
+        }
+        .post-media.unlocked .media-blur { filter: none; transform: none; }
+        .post-media.unlocked .media-overlay,
+        .post-media.unlocked .enc-chip,
+        .post-media.unlocked .cost-tag { display: none; }
+        .post-media.unlocked::after {
+            content: '✓ Unlocked'; position: absolute; top: 10px; left: 10px; z-index: 2;
+            background: rgba(0,0,0,0.5); color: #fff; font-size: 0.66rem; font-weight: 600;
+            padding: 4px 9px; border-radius: 14px;
+        }
+        .vtoast {
+            position: fixed; left: 50%; bottom: calc(86px + var(--safe-bottom));
+            transform: translate(-50%, 16px);
+            background: var(--bg-elevated); border: 1px solid var(--border); color: #fff;
+            padding: 11px 18px; border-radius: 14px; font-size: 0.84rem; z-index: 300;
+            opacity: 0; pointer-events: none; transition: all 0.28s ease; white-space: nowrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .vtoast.show { opacity: 1; transform: translate(-50%, 0); }
         .icon-btn {
             background: none; border: none; color: var(--text-primary);
             font-size: 1.3rem; cursor: pointer; line-height: 1;
@@ -336,6 +367,7 @@
     <header class="appbar">
         <div class="brand">Vault<span class="dot">.</span></div>
         <div class="appbar-actions">
+            <span class="pts-chip" id="ptsChip" title="Unlock points">💎 <b id="ptsVal">0</b></span>
             <button class="icon-btn" aria-label="Search">🔍</button>
             <button class="icon-btn" aria-label="Notifications">🔔</button>
         </div>
@@ -392,7 +424,9 @@
         <p class="sheet-note">Decryption powered by delock</p>
     </div>
 
-    <script src="creators.js?v=3"></script>
+    <div class="vtoast" id="vtoast"></div>
+
+    <script src="creators.js?v=4"></script>
     <script>
         const V = window.VAULT;
         const profileUrl = (id) => `creator.html?id=${encodeURIComponent(id)}`;
@@ -448,6 +482,7 @@
                 <div class="post-media">
                     <div class="media-blur" style="background:${V.grad(p.g)}"></div>
                     <div class="enc-chip">🔐 Encrypted</div>
+                    <div class="cost-tag">🔓 ${p.pts}</div>
                     <div class="media-overlay">
                         <div class="lock-circle">🔒</div>
                         <div class="enc-label">Exclusive &amp; encrypted</div>
@@ -465,8 +500,9 @@
                 <div class="post-caption">
                     <a href="${profileUrl(c.id)}" class="cap-name" style="color:inherit;text-decoration:none">${c.name}</a><span class="cap-text">${p.cap}</span>
                 </div>`;
-            // Tapping the locked media opens the unlock sheet (don't navigate)
-            article.querySelector('.post-media').addEventListener('click', openSheet);
+            // Tapping the locked media spends unlock points (or prompts delock)
+            const media = article.querySelector('.post-media');
+            media.addEventListener('click', () => tryUnlock(media, p.pts));
             // Follow button shouldn't navigate to the profile; toggle label instead
             const followBtn = article.querySelector('.post-follow');
             followBtn.addEventListener('click', (e) => {
@@ -495,6 +531,33 @@
             document.body.style.overflow = '';
         }
         backdrop.addEventListener('click', closeSheet);
+
+        // ----- Unlock points -----
+        const ptsVal = document.getElementById('ptsVal');
+        function updatePts() { ptsVal.textContent = V.getPoints(); }
+        updatePts();
+
+        const vtoast = document.getElementById('vtoast');
+        let vtTimer;
+        function showToast(msg) {
+            vtoast.textContent = msg;
+            vtoast.classList.add('show');
+            clearTimeout(vtTimer);
+            vtTimer = setTimeout(() => vtoast.classList.remove('show'), 1800);
+        }
+        function tryUnlock(mediaEl, cost) {
+            if (mediaEl.classList.contains('unlocked')) return;
+            const bal = V.getPoints();
+            if (bal >= cost) {
+                V.setPoints(bal - cost);
+                updatePts();
+                mediaEl.classList.add('unlocked');
+                showToast('Unlocked · −' + cost + ' pts');
+            } else {
+                showToast('Not enough points — unlock with delock');
+                openSheet();
+            }
+        }
     </script>
 </body>
 </html>
