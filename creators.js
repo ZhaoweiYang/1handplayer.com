@@ -14,7 +14,7 @@
             id: 'rina', name: 'Rina', handle: '@rina', init: 'R', g: 8,
             photo: 'images/rina.jpg',
             covers: ['images/rina-bg1.jpg', 'images/rina-bg2.jpg'],
-            bio: 'Tokyo street style 🖤 New restricted drops every week.',
+            bio: 'Tokyo street style 🖤 New exclusive drops every week.',
             followers: '88k', postCount: 24, likes: '1.5M',
             posts: [
                 { likes: '2.7k', cap: 'Streetwear set 🖤 Encrypted — unlock the full shoot', time: '1h ago', g: 9 },

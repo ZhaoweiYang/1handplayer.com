@@ -28,7 +28,7 @@
         '<div class="agegate-card" role="dialog" aria-modal="true" aria-label="Age verification">' +
         '<div class="agegate-badge">🔞</div>' +
         '<h2>Are you 18 or older?</h2>' +
-        '<p>This site contains restricted (18+) content. You must be of legal age to enter.</p>' +
+        '<p>This site contains exclusive (18+) content. You must be of legal age to enter.</p>' +
         '<div class="agegate-btns">' +
         '<button class="agegate-yes" data-act="yes">Yes, I’m 18 or older — Enter</button>' +
         '<button class="agegate-no" data-act="no">No, take me out</button>' +
