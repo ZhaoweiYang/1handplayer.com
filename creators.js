@@ -133,5 +133,27 @@
             : c.init;
     }
 
-    window.VAULT = { gradients, creators, homeFeed, reviews, grad, getCreator, avatarInner };
+    // Per-post unlock cost (points), assigned by index so it's stable and the
+    // same post shows the same cost in the feed and on the profile.
+    var COSTS = [8, 10, 12, 15, 18, 20, 25];
+    creators.forEach(function (c) {
+        c.posts.forEach(function (p, i) { if (p.pts == null) p.pts = COSTS[i % COSTS.length]; });
+    });
+
+    // Unlock-points balance (persisted). New visitors start with a balance;
+    // each unlock spends the post's cost. Running out funnels to delock.
+    var PKEY = 'vault_points';
+    var START_POINTS = 60;
+    function getPoints() {
+        try {
+            var v = localStorage.getItem(PKEY);
+            if (v === null) { setPoints(START_POINTS); return START_POINTS; }
+            return parseInt(v, 10) || 0;
+        } catch (e) { return START_POINTS; }
+    }
+    function setPoints(n) {
+        try { localStorage.setItem(PKEY, String(Math.max(0, n))); } catch (e) { /* ignore */ }
+    }
+
+    window.VAULT = { gradients, creators, homeFeed, reviews, grad, getCreator, avatarInner, getPoints, setPoints };
 })();

@@ -174,6 +174,41 @@
             border: 1px solid rgba(255,255,255,0.18);
             padding: 3px 7px; border-radius: 12px; font-size: 0.6rem; font-weight: 600;
         }
+        .cost-tag {
+            position: absolute; bottom: 8px; right: 8px; z-index: 2;
+            font-size: 0.6rem; color: rgba(255,255,255,0.6);
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12);
+            padding: 3px 7px; border-radius: 12px;
+        }
+        .tile.unlocked .tile-blur { filter: none; transform: none; }
+        .tile.unlocked .tile-overlay,
+        .tile.unlocked .tile-enc,
+        .tile.unlocked .cost-tag { display: none; }
+        .tile.unlocked::after {
+            content: '✓'; position: absolute; top: 6px; right: 6px; z-index: 2;
+            width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(0,0,0,0.5); color: #fff; font-size: 0.7rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        /* Unlock points */
+        .pts-chip {
+            margin-left: auto;
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.78rem; color: #fff;
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.18);
+            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+            padding: 4px 10px; border-radius: 20px;
+        }
+        .pts-chip b { font-weight: 800; }
+        .vtoast {
+            position: fixed; left: 50%; bottom: calc(28px + var(--safe-bottom));
+            transform: translate(-50%, 16px);
+            background: var(--bg-elevated); border: 1px solid var(--border); color: #fff;
+            padding: 11px 18px; border-radius: 14px; font-size: 0.84rem; z-index: 300;
+            opacity: 0; pointer-events: none; transition: all 0.28s ease; white-space: nowrap;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .vtoast.show { opacity: 1; transform: translate(-50%, 0); }
 
         /* Unlock bottom sheet (shared pattern) */
         .sheet-backdrop {
@@ -224,6 +259,7 @@
     <div class="topbar" id="topbar">
         <a class="back" href="platform.html" aria-label="Back">‹</a>
         <span class="topbar-title" id="topbarTitle"></span>
+        <span class="pts-chip" id="ptsChip" title="Unlock points">💎 <b id="ptsVal">0</b></span>
     </div>
 
     <div class="cover" id="cover">
@@ -273,7 +309,9 @@
         <p class="sheet-note">Decryption powered by delock</p>
     </div>
 
-    <script src="creators.js?v=3"></script>
+    <div class="vtoast" id="vtoast"></div>
+
+    <script src="creators.js?v=4"></script>
     <script>
         const V = window.VAULT;
         const params = new URLSearchParams(location.search);
@@ -362,8 +400,9 @@
             tile.innerHTML = `
                 <div class="tile-blur" style="background:${V.grad(post.g)}"></div>
                 <div class="tile-overlay"><div class="tile-lock">🔒</div></div>
-                <div class="tile-enc">🔐 Encrypted</div>`;
-            tile.addEventListener('click', openSheet);
+                <div class="tile-enc">🔐 Encrypted</div>
+                <div class="cost-tag">🔓 ${post.pts}</div>`;
+            tile.addEventListener('click', () => tryUnlock(tile, post.pts));
             grid.appendChild(tile);
         });
 
@@ -413,6 +452,33 @@
             document.body.style.overflow = '';
         }
         backdrop.addEventListener('click', closeSheet);
+
+        // ----- Unlock points -----
+        const ptsVal = document.getElementById('ptsVal');
+        function updatePts() { ptsVal.textContent = V.getPoints(); }
+        updatePts();
+
+        const vtoast = document.getElementById('vtoast');
+        let vtTimer;
+        function showToast(msg) {
+            vtoast.textContent = msg;
+            vtoast.classList.add('show');
+            clearTimeout(vtTimer);
+            vtTimer = setTimeout(() => vtoast.classList.remove('show'), 1800);
+        }
+        function tryUnlock(tileEl, cost) {
+            if (tileEl.classList.contains('unlocked')) return;
+            const bal = V.getPoints();
+            if (bal >= cost) {
+                V.setPoints(bal - cost);
+                updatePts();
+                tileEl.classList.add('unlocked');
+                showToast('Unlocked · −' + cost + ' pts');
+            } else {
+                showToast('Not enough points — unlock with delock');
+                openSheet();
+            }
+        }
         document.getElementById('unlockBtn').addEventListener('click', openSheet);
         document.getElementById('mediaTab').addEventListener('click', openSheet);
 
