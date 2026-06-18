@@ -407,8 +407,61 @@
     return stco ? stco.dataStart : -1;
   }
 
+  // ---- ZIP (store / no compression) ------------------------------------
+  // Bundles the .jpg + .mov into one download so the pair stays together.
+
+  var CRC_TABLE = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) {
+      var c = n;
+      for (var k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(u) {
+    var c = 0xffffffff;
+    for (var i = 0; i < u.length; i++) c = CRC_TABLE[(c ^ u[i]) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  }
+  function le16(n) { return new Uint8Array([n & 0xff, (n >>> 8) & 0xff]); }
+  function le32(n) {
+    return new Uint8Array([n & 0xff, (n >>> 8) & 0xff, (n >>> 16) & 0xff, (n >>> 24) & 0xff]);
+  }
+
+  // entries: [{name, data:Uint8Array}] -> Uint8Array (a valid .zip archive)
+  function makeZip(entries) {
+    var locals = [], central = [], offset = 0;
+    for (var i = 0; i < entries.length; i++) {
+      var nameBytes = ascii(entries[i].name);
+      var data = entries[i].data;
+      var crc = crc32(data);
+      var local = concat([
+        le32(0x04034b50), le16(20), le16(0), le16(0), le16(0), le16(0),
+        le32(crc), le32(data.length), le32(data.length),
+        le16(nameBytes.length), le16(0), nameBytes, data
+      ]);
+      locals.push(local);
+      central.push(concat([
+        le32(0x02014b50), le16(20), le16(20), le16(0), le16(0), le16(0), le16(0),
+        le32(crc), le32(data.length), le32(data.length),
+        le16(nameBytes.length), le16(0), le16(0), le16(0), le16(0), le32(0),
+        le32(offset), nameBytes
+      ]));
+      offset += local.length;
+    }
+    var centralBytes = concat(central);
+    var eocd = concat([
+      le32(0x06054b50), le16(0), le16(0),
+      le16(entries.length), le16(entries.length),
+      le32(centralBytes.length), le32(offset), le16(0)
+    ]);
+    return concat([concat(locals), centralBytes, eocd]);
+  }
+
   var engine = {
     makeUuid: makeUuid,
+    makeZip: makeZip,
     addAssetIdToJpeg: addAssetIdToJpeg,
     convertMovToLivePhoto: convertMovToLivePhoto,
     buildExifApp1: buildExifApp1,
@@ -537,10 +590,17 @@
       var base = (state.file.name || 'live-photo').replace(/\.[^.]+$/, '') + '_LivePhoto';
       var jpegBlob = new Blob([jpeg], { type: 'image/jpeg' });
       var movBlob = new Blob([mov], { type: 'video/quicktime' });
+      var zip = makeZip([
+        { name: base + '.jpg', data: jpeg },
+        { name: base + '.mov', data: mov }
+      ]);
+      var zipBlob = new Blob([zip], { type: 'application/zip' });
       var jpegUrl = URL.createObjectURL(jpegBlob);
       var movUrl = URL.createObjectURL(movBlob);
+      var zipUrl = URL.createObjectURL(zipBlob);
 
       $('lp-preview-img').src = jpegUrl;
+      var dlZip = $('lp-dl-zip'); dlZip.href = zipUrl; dlZip.download = base + '.zip';
       var dlImg = $('lp-dl-img'); dlImg.href = jpegUrl; dlImg.download = base + '.jpg';
       var dlMov = $('lp-dl-mov'); dlMov.href = movUrl; dlMov.download = base + '.mov';
       $('lp-uuid').textContent = uuid;
