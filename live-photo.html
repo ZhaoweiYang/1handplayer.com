@@ -157,8 +157,10 @@
             <div class="lp-result-grid">
                 <img id="lp-preview-img" alt="封面预览">
                 <div class="lp-downloads">
-                    <a class="btn" id="lp-dl-img" download>下载封面图片（.jpg）</a>
-                    <a class="btn btn-secondary" id="lp-dl-mov" download>下载实况视频（.mov）</a>
+                    <a class="btn" id="lp-dl-zip" download>⬇️ 下载实况照片（.zip 打包）</a>
+                    <p class="lp-uuid-row" style="margin:.1rem 0 .3rem;">推荐：图片 + 视频已打包在一起、文件名一致，解压后一起隔空投送到 iPhone 即可。</p>
+                    <a class="btn btn-secondary" id="lp-dl-img" download>单独下载封面图片（.jpg）</a>
+                    <a class="btn btn-secondary" id="lp-dl-mov" download>单独下载实况视频（.mov）</a>
                     <p class="lp-uuid-row">配对标识 (Content ID)：<span id="lp-uuid"></span></p>
                 </div>
             </div>
@@ -171,13 +173,13 @@
         <section class="lp-steps">
             <h2>如何导入 iPhone</h2>
             <ol>
-                <li>用电脑或安卓手机打开本页面，按上面的步骤生成并<strong>下载两个文件</strong>（一个 <strong>.jpg</strong> 和一个 <strong>.mov</strong>）。两个文件名相同、需放在一起。</li>
-                <li>把这两个文件一起<strong>隔空投送（AirDrop）</strong>到 iPhone；或先存进 iCloud 云盘 / 微信文件传输，再在 iPhone 上保存到“照片”。</li>
-                <li>在 iPhone「照片」中打开该图片，长按即可看到实况效果；左上角会显示「实况 / LIVE」标识。</li>
-                <li>若直接在 iPhone 上操作，可使用「快捷指令」或文件 App 把同名的 .jpg 与 .mov 一起存入相册。</li>
+                <li>点击「<strong>下载实况照片（.zip 打包）</strong>」，得到一个压缩包，里面是<strong>同名的 .jpg 和 .mov</strong> 两个文件。</li>
+                <li>在电脑或手机上<strong>解压</strong>该压缩包，得到这两个文件（请保持它们同名、放在同一文件夹）。</li>
+                <li>把这两个文件<strong>一起隔空投送（AirDrop）</strong>到 iPhone；或经 iCloud 云盘 / 微信文件传输，再在 iPhone 的「文件」里把它们一并保存到“照片”。</li>
+                <li>在 iPhone「照片」中打开该图片，长按即可看到实况效果，左上角会显示「实况 / LIVE」标识。</li>
             </ol>
             <div class="highlight-box">
-                <p>⚠️ <strong>提示：</strong>实况照片由「图片 + 视频」两个文件通过同一个配对标识关联组成，<strong>两个文件必须保持同名并一起传输</strong>，iOS 才会把它们识别为同一张实况照片。视频建议使用 H.264 编码的 MP4/MOV（iPhone 录制的视频即可）。</p>
+                <p>⚠️ <strong>关于「实况照片格式」：</strong>iOS 实况照片并不是一个单独的文件，而是「<strong>图片 + 视频</strong>」两个文件通过同一个配对标识关联组成的。本工具把它们打包进一个 .zip 方便下载，但导入时<strong>这两个文件必须保持同名、并一起传输</strong>，iOS 才会识别为同一张实况照片。视频建议使用 H.264 编码的 MP4/MOV（iPhone 录制的视频即可）。</p>
             </div>
         </section>
     </main>
